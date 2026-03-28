@@ -2,12 +2,51 @@
 -- ║           LARKEN — SECRET BRAINROT HUB               ║
 -- ║        Script Roblox Executor (Universal)            ║
 -- ║     Compatible : Synapse X / KRNL / Fluxus / Delta  ║
+-- ║  v3.0 — Supreme Keys • Dev Access • Blacklist • Fix ║
 -- ╚══════════════════════════════════════════════════════╝
 
+local Players          = game:GetService("Players")
+local TweenService     = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+local HttpService      = game:GetService("HttpService")
+local DataStoreService = game:GetService("DataStoreService")
+local LocalPlayer      = Players.LocalPlayer
+local PlayerGui        = LocalPlayer:WaitForChild("PlayerGui")
+
+math.randomseed(os.time())
+
 -- ══════════════════════════════════════════
---               100 CLÉS VALIDES
+--           CONFIG DÉVELOPPEUR
 -- ══════════════════════════════════════════
-local VALID_KEYS = {
+local DEV_PASSWORD  = "DEV-LARKEN-2025"
+local DEV_USERNAMES = { "compte634tyconts", "Aiko59_brt", "KAYZZOXX1" }
+local PLACE_ID      = 109983668079237
+
+-- ══════════════════════════════════════════
+--         DATASTORE (clés utilisées 1x)
+-- ══════════════════════════════════════════
+local usedKeysStore
+pcall(function()
+    usedKeysStore = DataStoreService:GetDataStore("LarkenUsedKeys_v1")
+end)
+local usedKeysCache = {}
+
+local function markKeyUsed(key)
+    usedKeysCache[key] = true
+    pcall(function() usedKeysStore:SetAsync(key, true) end)
+end
+
+local function isKeyUsed(key)
+    if usedKeysCache[key] then return true end
+    local ok, val = pcall(function() return usedKeysStore:GetAsync(key) end)
+    if ok and val then usedKeysCache[key] = true; return true end
+    return false
+end
+
+-- ══════════════════════════════════════════
+--        100 CLÉS NORMALES (1 utilisation)
+-- ══════════════════════════════════════════
+local NORMAL_KEYS = {
     "LRKN-A1B2-C3D4-E5F6","LRKN-G7H8-I9J0-K1L2","LRKN-M3N4-O5P6-Q7R8",
     "LRKN-S9T0-U1V2-W3X4","LRKN-Y5Z6-A7B8-C9D0","LRKN-E1F2-G3H4-I5J6",
     "LRKN-K7L8-M9N0-O1P2","LRKN-Q3R4-S5T6-U7V8","LRKN-W9X0-Y1Z2-A3B4",
@@ -44,36 +83,92 @@ local VALID_KEYS = {
 }
 
 -- ══════════════════════════════════════════
---     BRAINROTS + VRAIS NOMS SECRETS
+--     100 CLÉS SUPREME High Tier (1 use)
 -- ══════════════════════════════════════════
-local BRAINROTS = {
-    -- NOM PUBLIC                    NOM SECRET VRAI                         TIER  COULEUR
-    { name="Dragon Canneloni",       secret="Il Draghetto della Pasta",      tier=3, color=Color3.fromRGB(255,45,120) },
-    { name="Meowl",                  secret="Gufetto Miagolante",            tier=2, color=Color3.fromRGB(255,107,0) },
-    { name="Tralalero Tralala",      secret="Lo Squalo Canterino",           tier=3, color=Color3.fromRGB(255,45,120) },
-    { name="Bombardiro Crocodilo",   secret="Il Coccodrillo Bombarolo",      tier=3, color=Color3.fromRGB(255,45,120) },
-    { name="Tung Tung Tung Sahur",   secret="Il Tamburo della Notte Santa",  tier=1, color=Color3.fromRGB(100,180,255) },
-    { name="Bombombini Gusini",      secret="L'Ochetta Esplosiva",           tier=2, color=Color3.fromRGB(255,107,0) },
-    { name="Lirilì Larilà",         secret="L'Elefante della Savana Magica",tier=3, color=Color3.fromRGB(255,45,120) },
-    { name="Cappuccino Assassino",   secret="Il Caffè che Uccide",           tier=1, color=Color3.fromRGB(100,180,255) },
-    { name="Frigo Camelo",           secret="Il Cammello Refrigerato",       tier=2, color=Color3.fromRGB(255,107,0) },
-    { name="Glorbo Fruttodrago",     secret="Il Draghetto della Frutta",     tier=3, color=Color3.fromRGB(255,45,120) },
-    { name="La Vaca Saturno",        secret="La Mucca degli Anelli Cosmici", tier=2, color=Color3.fromRGB(255,107,0) },
-    { name="Brr Brr Patapim",        secret="La Scimmietta del Freddo",      tier=1, color=Color3.fromRGB(100,180,255) },
-    { name="Chimpanzini Bananini",   secret="Lo Scimpanzé delle Banane Dorate",tier=1,color=Color3.fromRGB(100,180,255) },
-    { name="Tracotoco Trocotoco",    secret="Il Pappagallo del Ritmo",       tier=2, color=Color3.fromRGB(255,107,0) },
-    { name="Crocodilo Porcelino",    secret="Il Coccodrillo di Porcellana",  tier=2, color=Color3.fromRGB(255,107,0) },
-    { name="Giraffini Maccheronini", secret="La Giraffa della Pasta Lunga",  tier=3, color=Color3.fromRGB(255,45,120) },
-    { name="Shrimpo Bambino",        secret="Il Gamberetto Bambino",         tier=1, color=Color3.fromRGB(100,180,255) },
-    { name="Furbo Serpentino",       secret="Il Serpente Astuto del Caos",   tier=3, color=Color3.fromRGB(255,45,120) },
-    { name="Pinguini Atletici",      secret="I Pinguini dello Sport Estremo",tier=1, color=Color3.fromRGB(100,180,255) },
-    { name="Orangutini Ballerini",   secret="L'Orango Danzante della Foresta",tier=2,color=Color3.fromRGB(255,107,0) },
-    { name="Octopussini Rocketini",  secret="Il Polpo Razzo Spaziale",       tier=3, color=Color3.fromRGB(255,45,120) },
-    { name="Gorillino Danzantino",   secret="Il Gorilla che Balla il Tango", tier=2, color=Color3.fromRGB(255,107,0) },
-    { name="Talpa Bombastica",       secret="La Talpa Esplosiva Sotterranea",tier=1, color=Color3.fromRGB(100,180,255) },
-    { name="Aquila Pirata",          secret="L'Aquila dei Sette Mari",       tier=3, color=Color3.fromRGB(255,45,120) },
-    { name="Lupo Gelato",            secret="Il Lupo che Mangia il Gelato",  tier=2, color=Color3.fromRGB(255,107,0) },
+local SUPREME_KEYS = {
+    "SUPR-A1X9-Z8B2-C3K7","SUPR-D4L6-E5M1-F6N0","SUPR-G7O9-H8P2-I9Q3",
+    "SUPR-J0R4-K1S5-L2T6","SUPR-M3U7-N4V8-O5W9","SUPR-P6X0-Q7Y1-R8Z2",
+    "SUPR-S9A3-T0B4-U1C5","SUPR-V2D6-W3E7-X4F8","SUPR-Y5G9-Z6H0-A7I1",
+    "SUPR-B8J2-C9K3-D0L4","SUPR-E1M5-F2N6-G3O7","SUPR-H4P8-I5Q9-J6R0",
+    "SUPR-K7S1-L8T2-M9U3","SUPR-N0V4-O1W5-P2X6","SUPR-Q3Y7-R4Z8-S5A9",
+    "SUPR-T6B0-U7C1-V8D2","SUPR-W9E3-X0F4-Y1G5","SUPR-Z2H6-A3I7-B4J8",
+    "SUPR-C5K9-D6L0-E7M1","SUPR-F8N2-G9O3-H0P4","SUPR-I1Q5-J2R6-K3S7",
+    "SUPR-L4T8-M5U9-N6V0","SUPR-O7W1-P8X2-Q9Y3","SUPR-R0Z4-S1A5-T2B6",
+    "SUPR-U3C7-V4D8-W5E9","SUPR-X6F0-Y7G1-Z8H2","SUPR-A9I3-B0J4-C1K5",
+    "SUPR-D2L6-E3M7-F4N8","SUPR-G5O9-H6P0-I7Q1","SUPR-J8R2-K9S3-L0T4",
+    "SUPR-M1U5-N2V6-O3W7","SUPR-P4X8-Q5Y9-R6Z0","SUPR-S7A1-T8B2-U9C3",
+    "SUPR-V0D4-W1E5-X2F6","SUPR-Y3G7-Z4H8-A5I9","SUPR-B6J0-C7K1-D8L2",
+    "SUPR-E9M3-F0N4-G1O5","SUPR-H2P6-I3Q7-J4R8","SUPR-K5S9-L6T0-M7U1",
+    "SUPR-N8V2-O9W3-P0X4","SUPR-Q1Y5-R2Z6-S3A7","SUPR-T4B8-U5C9-V6D0",
+    "SUPR-W7E1-X8F2-Y9G3","SUPR-Z0H4-A1I5-B2J6","SUPR-C3K7-D4L8-E5M9",
+    "SUPR-F6N0-G7O1-H8P2","SUPR-I9Q3-J0R4-K1S5","SUPR-L2T6-M3U7-N4V8",
+    "SUPR-O5W9-P6X0-Q7Y1","SUPR-R8Z2-S9A3-T0B4","SUPR-U1C5-V2D6-W3E7",
+    "SUPR-X4F8-Y5G9-Z6H0","SUPR-A7I1-B8J2-C9K3","SUPR-D0L4-E1M5-F2N6",
+    "SUPR-G3O7-H4P8-I5Q9","SUPR-J6R0-K7S1-L8T2","SUPR-M9U3-N0V4-O1W5",
+    "SUPR-P2X6-Q3Y7-R4Z8","SUPR-S5A9-T6B0-U7C1","SUPR-V8D2-W9E3-X0F4",
+    "SUPR-Y1G5-Z2H6-A3I7","SUPR-B4J8-C5K9-D6L0","SUPR-E7M1-F8N2-G9O3",
+    "SUPR-H0P4-I1Q5-J2R6","SUPR-K3S7-L4T8-M5U9","SUPR-N6V0-O7W1-P8X2",
+    "SUPR-Q9Y3-R0Z4-S1A5","SUPR-T2B6-U3C7-V4D8","SUPR-W5E9-X6F0-Y7G1",
+    "SUPR-Z8H2-A9I3-B0J4","SUPR-C1K5-D2L6-E3M7","SUPR-F4N8-G5O9-H6P0",
+    "SUPR-I7Q1-J8R2-K9S3","SUPR-L0T4-M1U5-N2V6","SUPR-O3W7-P4X8-Q5Y9",
+    "SUPR-R6Z0-S7A1-T8B2","SUPR-U9C3-V0D4-W1E5","SUPR-X2F6-Y3G7-Z4H8",
+    "SUPR-A5I9-B6J0-C7K1","SUPR-D8L2-E9M3-F0N4","SUPR-G1O5-H2P6-I3Q7",
+    "SUPR-J4R8-K5S9-L6T0","SUPR-M7U1-N8V2-O9W3","SUPR-P0X4-Q1Y5-R2Z6",
+    "SUPR-S3A7-T4B8-U5C9","SUPR-V6D0-W7E1-X8F2","SUPR-Y9G3-Z0H4-A1I5",
+    "SUPR-B2J6-C3K7-D4L8","SUPR-E5M9-F6N0-G7O1","SUPR-H8P2-I9Q3-J0R4",
+    "SUPR-K1S5-L2T6-M3U7","SUPR-N4V8-O5W9-P6X0","SUPR-Q7Y1-R8Z2-S9A3",
+    "SUPR-T0B4-U1C5-V2D6","SUPR-W3E7-X4F8-Y5G9","SUPR-Z6H0-A7I1-B8J2",
+    "SUPR-C9K3-D0L4-E1M5","SUPR-F2N6-G3O7-H4P8","SUPR-I5Q9-J6R0-K7S1",
 }
+
+-- ══════════════════════════════════════════
+--    BRAINROTS + NOMS SECRETS + RARITY
+-- ══════════════════════════════════════════
+-- rarity : plus petit = plus rare dans le feed
+local BRAINROTS = {
+    { name="Dragon Canneloni",        secret="Il Draghetto della Pasta",          tier=3, rarity=4  },
+    { name="Tralalero Tralala",        secret="Lo Squalo Canterino",              tier=3, rarity=5  },
+    { name="Bombardiro Crocodilo",     secret="Il Coccodrillo Bombarolo",         tier=3, rarity=5  },
+    { name="Lirilì Larilà",           secret="L'Elefante della Savana Magica",   tier=3, rarity=4  },
+    { name="Glorbo Fruttodrago",       secret="Il Draghetto della Frutta",        tier=3, rarity=3  },
+    { name="Furbo Serpentino",         secret="Il Serpente Astuto del Caos",      tier=3, rarity=3  },
+    { name="Octopussini Rocketini",    secret="Il Polpo Razzo Spaziale",          tier=3, rarity=4  },
+    { name="Aquila Pirata",            secret="L'Aquila dei Sette Mari",          tier=3, rarity=3  },
+    { name="Giraffini Maccheronini",   secret="La Giraffa della Pasta Lunga",     tier=3, rarity=5  },
+    { name="Garama 750",               secret="Il Garama della Potenza Suprema",  tier=3, rarity=2  },
+    { name="Evil Edon",                secret="L'Edon Oscuro del Caos",           tier=3, rarity=2  },
+    { name="Capitano",                 secret="Il Capitano dei Brainrot",         tier=3, rarity=2  },
+    { name="Meowl",                    secret="Gufetto Miagolante",               tier=2, rarity=12 },
+    { name="Bombombini Gusini",        secret="L'Ochetta Esplosiva",              tier=2, rarity=14 },
+    { name="Frigo Camelo",             secret="Il Cammello Refrigerato",          tier=2, rarity=13 },
+    { name="La Vaca Saturno",          secret="La Mucca degli Anelli Cosmici",    tier=2, rarity=15 },
+    { name="Tracotoco Trocotoco",      secret="Il Pappagallo del Ritmo",          tier=2, rarity=14 },
+    { name="Crocodilo Porcelino",      secret="Il Coccodrillo di Porcellana",     tier=2, rarity=12 },
+    { name="Orangutini Ballerini",     secret="L'Orango Danzante della Foresta",  tier=2, rarity=13 },
+    { name="Gorillino Danzantino",     secret="Il Gorilla che Balla il Tango",    tier=2, rarity=14 },
+    { name="Lupo Gelato",              secret="Il Lupo che Mangia il Gelato",     tier=2, rarity=12 },
+    { name="Garama 50",                secret="Il Piccolo Garama Arancione",      tier=2, rarity=10 },
+    { name="Los Mobilis",              secret="La Banda Mobile dell'Assurdo",     tier=2, rarity=11 },
+    { name="Snailo",                   secret="La Lumaca del Destino Lento",      tier=2, rarity=13 },
+    { name="Tung Tung Tung Sahur",     secret="Il Tamburo della Notte Santa",     tier=1, rarity=30 },
+    { name="Cappuccino Assassino",     secret="Il Caffe che Uccide",              tier=1, rarity=28 },
+    { name="Brr Brr Patapim",          secret="La Scimmietta del Freddo",         tier=1, rarity=32 },
+    { name="Chimpanzini Bananini",     secret="Lo Scimpanze delle Banane Dorate", tier=1, rarity=30 },
+    { name="Shrimpo Bambino",          secret="Il Gamberetto Bambino",            tier=1, rarity=35 },
+    { name="Pinguini Atletici",        secret="I Pinguini dello Sport Estremo",   tier=1, rarity=33 },
+    { name="Talpa Bombastica",         secret="La Talpa Esplosiva Sotterranea",   tier=1, rarity=28 },
+    { name="Dul Dul Dul",              secret="Il Trio dell'Assurdita Pura",      tier=1, rarity=25 },
+}
+
+-- Pool pondéré par rarity
+local function buildPool()
+    local pool = {}
+    for _, b in ipairs(BRAINROTS) do
+        for _ = 1, b.rarity do table.insert(pool, b) end
+    end
+    return pool
+end
+local RARITY_POOL = buildPool()
 
 local SERVERS = {
     "Steal a Brainrot #1","Steal a Brainrot #2","Steal a Brainrot #3",
@@ -82,33 +177,50 @@ local SERVERS = {
 }
 
 -- ══════════════════════════════════════════
---              UTILITAIRES
+--              BLACKLIST
 -- ══════════════════════════════════════════
-local function randInt(a, b) return math.random(a, b) end
+local blacklist = {}
+local function isBlacklisted(name) return blacklist[name:lower()] == true end
+local function toggleBlacklist(name)
+    local k = name:lower()
+    if blacklist[k] then blacklist[k] = nil; return false
+    else blacklist[k] = true; return true end
+end
+
+-- ══════════════════════════════════════════
+--             UTILITAIRES
+-- ══════════════════════════════════════════
+local function randInt(a,b) return math.random(a,b) end
 local function randItem(t) return t[math.random(#t)] end
-local function isValidKey(k)
-    k = k:upper():gsub("%s+","")
-    for _, v in ipairs(VALID_KEYS) do
-        if v == k then return true end
+
+local function checkKey(raw)
+    local k = raw:upper():gsub("%s+","")
+    if k == DEV_PASSWORD then
+        local uname = LocalPlayer.Name
+        for _, u in ipairs(DEV_USERNAMES) do
+            if u:lower() == uname:lower() then return "dev" end
+        end
+        return "not_dev"
     end
-    return false
+    for _, v in ipairs(SUPREME_KEYS) do
+        if v == k then
+            if isKeyUsed(k) then return "used" end
+            markKeyUsed(k); return "supreme"
+        end
+    end
+    for _, v in ipairs(NORMAL_KEYS) do
+        if v == k then
+            if isKeyUsed(k) then return "used" end
+            markKeyUsed(k); return "normal"
+        end
+    end
+    return "invalid"
 end
 
--- Services Roblox
-local Players        = game:GetService("Players")
-local TweenService   = game:GetService("TweenService")
-local RunService     = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
-local LocalPlayer    = Players.LocalPlayer
-local PlayerGui      = LocalPlayer:WaitForChild("PlayerGui")
-
 -- ══════════════════════════════════════════
---              BUILD GUI
+--           NETTOYAGE
 -- ══════════════════════════════════════════
--- Nettoyage si déjà présent
-if PlayerGui:FindFirstChild("LarkenHub") then
-    PlayerGui.LarkenHub:Destroy()
-end
+if PlayerGui:FindFirstChild("LarkenHub") then PlayerGui.LarkenHub:Destroy() end
 
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "LarkenHub"
@@ -117,764 +229,586 @@ ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 ScreenGui.Parent = PlayerGui
 
 -- ══════════════════════════════════════════
+--     HELPERS UI
+-- ══════════════════════════════════════════
+local function mkCorner(p,r) local c=Instance.new("UICorner",p); c.CornerRadius=UDim.new(0,r or 8); return c end
+local function mkStroke(p,col,th,tr) local s=Instance.new("UIStroke",p); s.Color=col; s.Thickness=th or 1; s.Transparency=tr or 0; return s end
+local function mkLabel(parent,text,size,color,font,ax,pos,sz,zi)
+    local l=Instance.new("TextLabel",parent)
+    l.Text=text; l.TextSize=size; l.TextColor3=color
+    l.Font=font or Enum.Font.GothamBold
+    l.TextXAlignment=ax or Enum.TextXAlignment.Left
+    l.BackgroundTransparency=1
+    l.Position=pos or UDim2.new(0,0,0,0)
+    l.Size=sz or UDim2.new(1,0,0,20)
+    l.ZIndex=zi or 8
+    return l
+end
+
+-- ══════════════════════════════════════════
 --           ÉCRAN CLÉ
 -- ══════════════════════════════════════════
-local KeyFrame = Instance.new("Frame")
-KeyFrame.Name = "KeyFrame"
-KeyFrame.Size = UDim2.new(1, 0, 1, 0)
-KeyFrame.BackgroundColor3 = Color3.fromRGB(5, 5, 12)
-KeyFrame.BorderSizePixel = 0
-KeyFrame.ZIndex = 10
-KeyFrame.Parent = ScreenGui
+local KeyFrame=Instance.new("Frame",ScreenGui)
+KeyFrame.Size=UDim2.new(1,0,1,0); KeyFrame.BackgroundColor3=Color3.fromRGB(5,5,12)
+KeyFrame.BorderSizePixel=0; KeyFrame.ZIndex=10
 
--- Titre LARKEN
-local KeyTitle = Instance.new("TextLabel")
-KeyTitle.Size = UDim2.new(0, 400, 0, 70)
-KeyTitle.Position = UDim2.new(0.5, -200, 0.28, 0)
-KeyTitle.BackgroundTransparency = 1
-KeyTitle.Text = "LARKEN"
-KeyTitle.Font = Enum.Font.GothamBold
-KeyTitle.TextSize = 52
-KeyTitle.TextColor3 = Color3.fromRGB(57, 255, 20)
-KeyTitle.ZIndex = 11
-KeyTitle.Parent = KeyFrame
+mkLabel(KeyFrame,"LARKEN",52,Color3.fromRGB(57,255,20),Enum.Font.GothamBold,
+    Enum.TextXAlignment.Center,UDim2.new(0.5,-200,0.24,0),UDim2.new(0,400,0,70),11)
+mkLabel(KeyFrame,"SECRET BRAINROT HUB  |  ACCES SECURISE",11,
+    Color3.fromRGB(65,65,88),Enum.Font.Gotham,Enum.TextXAlignment.Center,
+    UDim2.new(0.5,-220,0.4,0),UDim2.new(0,440,0,22),11)
 
-local KeySub = Instance.new("TextLabel")
-KeySub.Size = UDim2.new(0, 400, 0, 25)
-KeySub.Position = UDim2.new(0.5, -200, 0.42, 0)
-KeySub.BackgroundTransparency = 1
-KeySub.Text = "SECRET BRAINROT HUB — ACCES SECURISE"
-KeySub.Font = Enum.Font.Gotham
-KeySub.TextSize = 12
-KeySub.TextColor3 = Color3.fromRGB(80, 80, 100)
-KeySub.ZIndex = 11
-KeySub.Parent = KeyFrame
+local KeyBox=Instance.new("Frame",KeyFrame)
+KeyBox.Size=UDim2.new(0,430,0,225); KeyBox.Position=UDim2.new(0.5,-215,0.46,-112)
+KeyBox.BackgroundColor3=Color3.fromRGB(15,15,25); KeyBox.BorderSizePixel=0; KeyBox.ZIndex=11
+mkCorner(KeyBox,14); mkStroke(KeyBox,Color3.fromRGB(57,255,20),1,0.55)
 
--- Box clé
-local KeyBox = Instance.new("Frame")
-KeyBox.Size = UDim2.new(0, 400, 0, 180)
-KeyBox.Position = UDim2.new(0.5, -200, 0.5, -30)
-KeyBox.BackgroundColor3 = Color3.fromRGB(18, 18, 28)
-KeyBox.BorderSizePixel = 0
-KeyBox.ZIndex = 11
-KeyBox.Parent = KeyFrame
-Instance.new("UICorner", KeyBox).CornerRadius = UDim.new(0, 12)
-local KeyStroke = Instance.new("UIStroke", KeyBox)
-KeyStroke.Color = Color3.fromRGB(57, 255, 20)
-KeyStroke.Thickness = 1
-KeyStroke.Transparency = 0.6
+mkLabel(KeyBox,"CLE D'ACCES",10,Color3.fromRGB(57,255,20),Enum.Font.GothamBold,
+    Enum.TextXAlignment.Left,UDim2.new(0,16,0,14),UDim2.new(1,-32,0,16),12)
 
-local KeyLabel = Instance.new("TextLabel")
-KeyLabel.Size = UDim2.new(1, -30, 0, 20)
-KeyLabel.Position = UDim2.new(0, 15, 0, 15)
-KeyLabel.BackgroundTransparency = 1
-KeyLabel.Text = "CLE D'ACCES"
-KeyLabel.Font = Enum.Font.GothamBold
-KeyLabel.TextSize = 11
-KeyLabel.TextColor3 = Color3.fromRGB(57, 255, 20)
-KeyLabel.TextXAlignment = Enum.TextXAlignment.Left
-KeyLabel.ZIndex = 12
-KeyLabel.Parent = KeyBox
+local KeyInput=Instance.new("TextBox",KeyBox)
+KeyInput.Size=UDim2.new(1,-32,0,38); KeyInput.Position=UDim2.new(0,16,0,36)
+KeyInput.BackgroundColor3=Color3.fromRGB(8,8,16); KeyInput.BorderSizePixel=0
+KeyInput.PlaceholderText="LRKN-XXXX  /  SUPR-XXXX  /  DEV-LARKEN-2025"
+KeyInput.Text=""; KeyInput.Font=Enum.Font.GothamBold; KeyInput.TextSize=11
+KeyInput.TextColor3=Color3.fromRGB(57,255,20); KeyInput.PlaceholderColor3=Color3.fromRGB(22,48,22)
+KeyInput.ClearTextOnFocus=false; KeyInput.ZIndex=12
+mkCorner(KeyInput,8); mkStroke(KeyInput,Color3.fromRGB(57,255,20),1,0.65)
 
-local KeyInput = Instance.new("TextBox")
-KeyInput.Size = UDim2.new(1, -30, 0, 38)
-KeyInput.Position = UDim2.new(0, 15, 0, 42)
-KeyInput.BackgroundColor3 = Color3.fromRGB(8, 8, 15)
-KeyInput.BorderSizePixel = 0
-KeyInput.PlaceholderText = "LRKN-XXXX-XXXX-XXXX"
-KeyInput.Text = ""
-KeyInput.Font = Enum.Font.GothamBold
-KeyInput.TextSize = 13
-KeyInput.TextColor3 = Color3.fromRGB(57, 255, 20)
-KeyInput.PlaceholderColor3 = Color3.fromRGB(30, 60, 30)
-KeyInput.ClearTextOnFocus = false
-KeyInput.ZIndex = 12
-KeyInput.Parent = KeyBox
-Instance.new("UICorner", KeyInput).CornerRadius = UDim.new(0, 8)
-local InputStroke = Instance.new("UIStroke", KeyInput)
-InputStroke.Color = Color3.fromRGB(57, 255, 20)
-InputStroke.Thickness = 1
-InputStroke.Transparency = 0.65
+local KeyError=Instance.new("TextLabel",KeyBox)
+KeyError.Size=UDim2.new(1,-32,0,16); KeyError.Position=UDim2.new(0,16,0,82)
+KeyError.BackgroundTransparency=1; KeyError.Text=""; KeyError.Font=Enum.Font.GothamBold
+KeyError.TextSize=11; KeyError.TextColor3=Color3.fromRGB(255,45,120)
+KeyError.TextXAlignment=Enum.TextXAlignment.Left; KeyError.ZIndex=12
 
-local KeyError = Instance.new("TextLabel")
-KeyError.Size = UDim2.new(1, -30, 0, 18)
-KeyError.Position = UDim2.new(0, 15, 0, 86)
-KeyError.BackgroundTransparency = 1
-KeyError.Text = "CLE INVALIDE — ACCES REFUSE"
-KeyError.Font = Enum.Font.GothamBold
-KeyError.TextSize = 11
-KeyError.TextColor3 = Color3.fromRGB(255, 45, 120)
-KeyError.TextXAlignment = Enum.TextXAlignment.Left
-KeyError.Visible = false
-KeyError.ZIndex = 12
-KeyError.Parent = KeyBox
+local KeyBtn=Instance.new("TextButton",KeyBox)
+KeyBtn.Size=UDim2.new(1,-32,0,40); KeyBtn.Position=UDim2.new(0,16,0,106)
+KeyBtn.BackgroundColor3=Color3.fromRGB(57,255,20); KeyBtn.BorderSizePixel=0
+KeyBtn.Text="ACCEDER AU HUB"; KeyBtn.Font=Enum.Font.GothamBold; KeyBtn.TextSize=13
+KeyBtn.TextColor3=Color3.fromRGB(0,0,0); KeyBtn.ZIndex=12
+mkCorner(KeyBtn,8)
 
-local KeyBtn = Instance.new("TextButton")
-KeyBtn.Size = UDim2.new(1, -30, 0, 38)
-KeyBtn.Position = UDim2.new(0, 15, 0, 110)
-KeyBtn.BackgroundColor3 = Color3.fromRGB(57, 255, 20)
-KeyBtn.BorderSizePixel = 0
-KeyBtn.Text = "ACCEDER AU HUB"
-KeyBtn.Font = Enum.Font.GothamBold
-KeyBtn.TextSize = 13
-KeyBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
-KeyBtn.ZIndex = 12
-KeyBtn.Parent = KeyBox
-Instance.new("UICorner", KeyBtn).CornerRadius = UDim.new(0, 8)
-
--- Hint
-local KeyHint = Instance.new("TextLabel")
-KeyHint.Size = UDim2.new(0, 400, 0, 20)
-KeyHint.Position = UDim2.new(0.5, -200, 0.5, 160)
-KeyHint.BackgroundTransparency = 1
-KeyHint.Text = "100 cles disponibles"
-KeyHint.Font = Enum.Font.Gotham
-KeyHint.TextSize = 11
-KeyHint.TextColor3 = Color3.fromRGB(50, 50, 65)
-KeyHint.ZIndex = 11
-KeyHint.Parent = KeyFrame
+mkLabel(KeyBox,"100 cles normales  •  100 cles SUPREME  •  Acces developpeur",10,
+    Color3.fromRGB(42,42,62),Enum.Font.Gotham,Enum.TextXAlignment.Center,
+    UDim2.new(0,0,0,162),UDim2.new(1,0,0,16),12)
 
 -- ══════════════════════════════════════════
---              FENÊTRE HUB PRINCIPALE
+--           HUB PRINCIPAL
 -- ══════════════════════════════════════════
-local HubFrame = Instance.new("Frame")
-HubFrame.Name = "HubFrame"
-HubFrame.Size = UDim2.new(0, 720, 0, 480)
-HubFrame.Position = UDim2.new(0.5, -360, 0.5, -240)
-HubFrame.BackgroundColor3 = Color3.fromRGB(8, 8, 15)
-HubFrame.BorderSizePixel = 0
-HubFrame.Visible = false
-HubFrame.ZIndex = 5
-HubFrame.Parent = ScreenGui
-Instance.new("UICorner", HubFrame).CornerRadius = UDim.new(0, 14)
-local HubStroke = Instance.new("UIStroke", HubFrame)
-HubStroke.Color = Color3.fromRGB(57, 255, 20)
-HubStroke.Thickness = 2
-HubStroke.Transparency = 0.1
+local HubFrame=Instance.new("Frame",ScreenGui)
+HubFrame.Size=UDim2.new(0,790,0,530); HubFrame.Position=UDim2.new(0.5,-395,0.5,-265)
+HubFrame.BackgroundColor3=Color3.fromRGB(8,8,15); HubFrame.BorderSizePixel=0
+HubFrame.Visible=false; HubFrame.ZIndex=5; HubFrame.ClipsDescendants=true
+mkCorner(HubFrame,14)
+local HubStroke=mkStroke(HubFrame,Color3.fromRGB(57,255,20),2,0.1)
 
 -- Drag
-local dragging, dragInput, dragStart, startPos
-HubFrame.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        dragging = true
-        dragStart = input.Position
-        startPos = HubFrame.Position
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then dragging = false end
+local dragging,dragInput,dragStart,startPos
+HubFrame.InputBegan:Connect(function(i)
+    if i.UserInputType==Enum.UserInputType.MouseButton1 then
+        dragging=true; dragStart=i.Position; startPos=HubFrame.Position
+        i.Changed:Connect(function()
+            if i.UserInputState==Enum.UserInputState.End then dragging=false end
         end)
     end
 end)
-HubFrame.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement then
-        dragInput = input
-    end
+HubFrame.InputChanged:Connect(function(i)
+    if i.UserInputType==Enum.UserInputType.MouseMovement then dragInput=i end
 end)
-UserInputService.InputChanged:Connect(function(input)
-    if input == dragInput and dragging then
-        local delta = input.Position - dragStart
-        HubFrame.Position = UDim2.new(
-            startPos.X.Scale, startPos.X.Offset + delta.X,
-            startPos.Y.Scale, startPos.Y.Offset + delta.Y
-        )
+UserInputService.InputChanged:Connect(function(i)
+    if i==dragInput and dragging then
+        local d=i.Position-dragStart
+        HubFrame.Position=UDim2.new(startPos.X.Scale,startPos.X.Offset+d.X,startPos.Y.Scale,startPos.Y.Offset+d.Y)
     end
 end)
 
--- ─── TOPBAR ───
-local TopBar = Instance.new("Frame")
-TopBar.Size = UDim2.new(1, 0, 0, 40)
-TopBar.BackgroundColor3 = Color3.fromRGB(12, 12, 20)
-TopBar.BorderSizePixel = 0
-TopBar.ZIndex = 6
-TopBar.Parent = HubFrame
-Instance.new("UICorner", TopBar).CornerRadius = UDim.new(0, 14)
+-- TOPBAR
+local TopBar=Instance.new("Frame",HubFrame)
+TopBar.Size=UDim2.new(1,0,0,42); TopBar.BackgroundColor3=Color3.fromRGB(11,11,20)
+TopBar.BorderSizePixel=0; TopBar.ZIndex=6
+mkCorner(TopBar,14)
 
-local TopTitle = Instance.new("TextLabel")
-TopTitle.Size = UDim2.new(0, 200, 1, 0)
-TopTitle.Position = UDim2.new(0, 14, 0, 0)
-TopTitle.BackgroundTransparency = 1
-TopTitle.Text = "LARKEN  •  SECRET BRAINROT HUB"
-TopTitle.Font = Enum.Font.GothamBold
-TopTitle.TextSize = 12
-TopTitle.TextColor3 = Color3.fromRGB(57, 255, 20)
-TopTitle.TextXAlignment = Enum.TextXAlignment.Left
-TopTitle.ZIndex = 7
-TopTitle.Parent = TopBar
+mkLabel(TopBar,"LARKEN  •  SECRET BRAINROT HUB",12,Color3.fromRGB(57,255,20),
+    Enum.Font.GothamBold,Enum.TextXAlignment.Left,
+    UDim2.new(0,14,0,0),UDim2.new(0,280,1,0),7)
 
--- Bouton fermer
-local CloseBtn = Instance.new("TextButton")
-CloseBtn.Size = UDim2.new(0, 28, 0, 22)
-CloseBtn.Position = UDim2.new(1, -34, 0.5, -11)
-CloseBtn.BackgroundColor3 = Color3.fromRGB(255, 45, 120)
-CloseBtn.BorderSizePixel = 0
-CloseBtn.Text = "X"
-CloseBtn.Font = Enum.Font.GothamBold
-CloseBtn.TextSize = 12
-CloseBtn.TextColor3 = Color3.fromRGB(255,255,255)
-CloseBtn.ZIndex = 7
-CloseBtn.Parent = TopBar
-Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0, 6)
+local AccessBadge=Instance.new("TextLabel",TopBar)
+AccessBadge.Size=UDim2.new(0,105,0,22); AccessBadge.Position=UDim2.new(0,298,0.5,-11)
+AccessBadge.BackgroundColor3=Color3.fromRGB(28,28,45); AccessBadge.BorderSizePixel=0
+AccessBadge.Text="NORMAL"; AccessBadge.Font=Enum.Font.GothamBold; AccessBadge.TextSize=10
+AccessBadge.TextColor3=Color3.fromRGB(130,130,170); AccessBadge.ZIndex=7
+mkCorner(AccessBadge,6)
 
--- Bouton minimize
-local MinBtn = Instance.new("TextButton")
-MinBtn.Size = UDim2.new(0, 28, 0, 22)
-MinBtn.Position = UDim2.new(1, -68, 0.5, -11)
-MinBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 45)
-MinBtn.BorderSizePixel = 0
-MinBtn.Text = "—"
-MinBtn.Font = Enum.Font.GothamBold
-MinBtn.TextSize = 12
-MinBtn.TextColor3 = Color3.fromRGB(150,150,170)
-MinBtn.ZIndex = 7
-MinBtn.Parent = TopBar
-Instance.new("UICorner", MinBtn).CornerRadius = UDim.new(0, 6)
+local BLBtn=Instance.new("TextButton",TopBar)
+BLBtn.Size=UDim2.new(0,82,0,24); BLBtn.Position=UDim2.new(1,-252,0.5,-12)
+BLBtn.BackgroundColor3=Color3.fromRGB(28,12,12); BLBtn.BorderSizePixel=0
+BLBtn.Text="BLACKLIST"; BLBtn.Font=Enum.Font.GothamBold; BLBtn.TextSize=9
+BLBtn.TextColor3=Color3.fromRGB(255,90,90); BLBtn.ZIndex=7
+mkCorner(BLBtn,6); mkStroke(BLBtn,Color3.fromRGB(255,70,70),1,0.5)
 
--- ─── LEFT PANEL ───
-local LeftPanel = Instance.new("Frame")
-LeftPanel.Size = UDim2.new(0, 175, 1, -40)
-LeftPanel.Position = UDim2.new(0, 0, 0, 40)
-LeftPanel.BackgroundColor3 = Color3.fromRGB(11, 11, 18)
-LeftPanel.BorderSizePixel = 0
-LeftPanel.ZIndex = 6
-LeftPanel.Parent = HubFrame
+local CloseBtn=Instance.new("TextButton",TopBar)
+CloseBtn.Size=UDim2.new(0,28,0,22); CloseBtn.Position=UDim2.new(1,-34,0.5,-11)
+CloseBtn.BackgroundColor3=Color3.fromRGB(255,45,120); CloseBtn.BorderSizePixel=0
+CloseBtn.Text="X"; CloseBtn.Font=Enum.Font.GothamBold; CloseBtn.TextSize=12
+CloseBtn.TextColor3=Color3.fromRGB(255,255,255); CloseBtn.ZIndex=7
+mkCorner(CloseBtn,6)
 
-local BrandLabel = Instance.new("TextLabel")
-BrandLabel.Size = UDim2.new(1, -16, 0, 55)
-BrandLabel.Position = UDim2.new(0, 12, 0, 10)
-BrandLabel.BackgroundTransparency = 1
-BrandLabel.Text = "LARKEN\nBRAINROT HUB"
-BrandLabel.Font = Enum.Font.GothamBold
-BrandLabel.TextSize = 17
-BrandLabel.TextColor3 = Color3.fromRGB(57, 255, 20)
-BrandLabel.TextXAlignment = Enum.TextXAlignment.Left
-BrandLabel.ZIndex = 7
-BrandLabel.Parent = LeftPanel
+local MinBtn=Instance.new("TextButton",TopBar)
+MinBtn.Size=UDim2.new(0,28,0,22); MinBtn.Position=UDim2.new(1,-68,0.5,-11)
+MinBtn.BackgroundColor3=Color3.fromRGB(28,28,45); MinBtn.BorderSizePixel=0
+MinBtn.Text="—"; MinBtn.Font=Enum.Font.GothamBold; MinBtn.TextSize=12
+MinBtn.TextColor3=Color3.fromRGB(140,140,165); MinBtn.ZIndex=7
+mkCorner(MinBtn,6)
 
--- Tier buttons
-local tierButtons = {}
-local tierData = {
-    {label="TIER 1\n1M - 25M",  bg=Color3.fromRGB(22,22,35),  active=Color3.fromRGB(35,35,55)},
-    {label="TIER 2\n25M - 100M",bg=Color3.fromRGB(200,100,0), active=Color3.fromRGB(220,140,0)},
-    {label="TIER 3\n100M+ MAX", bg=Color3.fromRGB(180,0,80),  active=Color3.fromRGB(220,0,100)},
+-- CONTENU (se cache au minimize grâce à ClipsDescendants)
+local HubContent=Instance.new("Frame",HubFrame)
+HubContent.Size=UDim2.new(1,0,1,-42); HubContent.Position=UDim2.new(0,0,0,42)
+HubContent.BackgroundTransparency=1; HubContent.ZIndex=5
+
+-- LEFT PANEL
+local Left=Instance.new("Frame",HubContent)
+Left.Size=UDim2.new(0,182,1,0); Left.BackgroundColor3=Color3.fromRGB(11,11,18)
+Left.BorderSizePixel=0; Left.ZIndex=6
+
+mkLabel(Left,"LARKEN\nBRAINROT HUB",16,Color3.fromRGB(57,255,20),
+    Enum.Font.GothamBold,Enum.TextXAlignment.Left,
+    UDim2.new(0,12,0,8),UDim2.new(1,-16,0,52),7)
+
+local tierDefs={
+    {label="TIER 1\n1M - 25M",  bg=Color3.fromRGB(22,22,35)},
+    {label="TIER 2\n25M-100M",  bg=Color3.fromRGB(185,88,0)},
+    {label="TIER 3\n100M+ MAX", bg=Color3.fromRGB(165,0,72)},
 }
-for i, td in ipairs(tierData) do
-    local tb = Instance.new("TextButton")
-    tb.Size = UDim2.new(1, -16, 0, 52)
-    tb.Position = UDim2.new(0, 8, 0, 60 + (i-1)*60)
-    tb.BackgroundColor3 = td.bg
-    tb.BorderSizePixel = 0
-    tb.Text = td.label
-    tb.Font = Enum.Font.GothamBold
-    tb.TextSize = 13
-    tb.TextColor3 = Color3.fromRGB(255, 255, 255)
-    tb.ZIndex = 7
-    tb.Parent = LeftPanel
-    Instance.new("UICorner", tb).CornerRadius = UDim.new(0, 10)
-    tierButtons[i] = tb
+local tierBtns={}
+for i,td in ipairs(tierDefs) do
+    local tb=Instance.new("TextButton",Left)
+    tb.Size=UDim2.new(1,-14,0,50); tb.Position=UDim2.new(0,7,0,58+(i-1)*57)
+    tb.BackgroundColor3=td.bg; tb.BorderSizePixel=0
+    tb.Text=td.label; tb.Font=Enum.Font.GothamBold; tb.TextSize=12
+    tb.TextColor3=Color3.fromRGB(255,255,255); tb.ZIndex=7
+    mkCorner(tb,10); tierBtns[i]=tb
 end
 
--- Auto Join toggle
-local AJBtn = Instance.new("TextButton")
-AJBtn.Size = UDim2.new(1, -16, 0, 38)
-AJBtn.Position = UDim2.new(0, 8, 1, -90)
-AJBtn.BackgroundColor3 = Color3.fromRGB(15, 35, 15)
-AJBtn.BorderSizePixel = 0
-AJBtn.Text = "AUTO JOIN: OFF"
-AJBtn.Font = Enum.Font.GothamBold
-AJBtn.TextSize = 11
-AJBtn.TextColor3 = Color3.fromRGB(57, 255, 20)
-AJBtn.ZIndex = 7
-AJBtn.Parent = LeftPanel
-Instance.new("UICorner", AJBtn).CornerRadius = UDim.new(0, 10)
-local AJStroke = Instance.new("UIStroke", AJBtn)
-AJStroke.Color = Color3.fromRGB(57, 255, 20)
-AJStroke.Thickness = 1
-AJStroke.Transparency = 0.6
+local AJBtn=Instance.new("TextButton",Left)
+AJBtn.Size=UDim2.new(1,-14,0,36); AJBtn.Position=UDim2.new(0,7,1,-88)
+AJBtn.BackgroundColor3=Color3.fromRGB(12,30,12); AJBtn.BorderSizePixel=0
+AJBtn.Text="AUTO JOIN: OFF"; AJBtn.Font=Enum.Font.GothamBold; AJBtn.TextSize=10
+AJBtn.TextColor3=Color3.fromRGB(57,255,20); AJBtn.ZIndex=7
+mkCorner(AJBtn,10); mkStroke(AJBtn,Color3.fromRGB(57,255,20),1,0.6)
 
--- Clear All
-local ClearBtn = Instance.new("TextButton")
-ClearBtn.Size = UDim2.new(1, -16, 0, 34)
-ClearBtn.Position = UDim2.new(0, 8, 1, -48)
-ClearBtn.BackgroundColor3 = Color3.fromRGB(30, 10, 18)
-ClearBtn.BorderSizePixel = 0
-ClearBtn.Text = "CLEAR ALL"
-ClearBtn.Font = Enum.Font.GothamBold
-ClearBtn.TextSize = 11
-ClearBtn.TextColor3 = Color3.fromRGB(255, 45, 120)
-ClearBtn.ZIndex = 7
-ClearBtn.Parent = LeftPanel
-Instance.new("UICorner", ClearBtn).CornerRadius = UDim.new(0, 10)
-local ClearStroke = Instance.new("UIStroke", ClearBtn)
-ClearStroke.Color = Color3.fromRGB(255, 45, 120)
-ClearStroke.Thickness = 1
-ClearStroke.Transparency = 0.5
+local ClearBtn=Instance.new("TextButton",Left)
+ClearBtn.Size=UDim2.new(1,-14,0,32); ClearBtn.Position=UDim2.new(0,7,1,-48)
+ClearBtn.BackgroundColor3=Color3.fromRGB(26,8,16); ClearBtn.BorderSizePixel=0
+ClearBtn.Text="CLEAR ALL"; ClearBtn.Font=Enum.Font.GothamBold; ClearBtn.TextSize=10
+ClearBtn.TextColor3=Color3.fromRGB(255,45,120); ClearBtn.ZIndex=7
+mkCorner(ClearBtn,10); mkStroke(ClearBtn,Color3.fromRGB(255,45,120),1,0.5)
 
--- ─── RIGHT PANEL / FEED ───
-local FeedFrame = Instance.new("Frame")
-FeedFrame.Size = UDim2.new(1, -175, 1, -40)
-FeedFrame.Position = UDim2.new(0, 175, 0, 40)
-FeedFrame.BackgroundTransparency = 1
-FeedFrame.ZIndex = 6
-FeedFrame.Parent = HubFrame
+-- FEED
+local FeedOuter=Instance.new("Frame",HubContent)
+FeedOuter.Size=UDim2.new(1,-182,1,0); FeedOuter.Position=UDim2.new(0,182,0,0)
+FeedOuter.BackgroundTransparency=1; FeedOuter.ZIndex=6
 
-local ScrollFrame = Instance.new("ScrollingFrame")
-ScrollFrame.Size = UDim2.new(1, -6, 1, -30)
-ScrollFrame.Position = UDim2.new(0, 4, 0, 4)
-ScrollFrame.BackgroundTransparency = 1
-ScrollFrame.BorderSizePixel = 0
-ScrollFrame.ScrollBarThickness = 3
-ScrollFrame.ScrollBarImageColor3 = Color3.fromRGB(57, 255, 20)
-ScrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
-ScrollFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
-ScrollFrame.ZIndex = 6
-ScrollFrame.Parent = FeedFrame
+local ScrollFrame=Instance.new("ScrollingFrame",FeedOuter)
+ScrollFrame.Size=UDim2.new(1,-4,1,-28); ScrollFrame.Position=UDim2.new(0,2,0,2)
+ScrollFrame.BackgroundTransparency=1; ScrollFrame.BorderSizePixel=0
+ScrollFrame.ScrollBarThickness=3; ScrollFrame.ScrollBarImageColor3=Color3.fromRGB(57,255,20)
+ScrollFrame.CanvasSize=UDim2.new(0,0,0,0); ScrollFrame.AutomaticCanvasSize=Enum.AutomaticSize.Y
+ScrollFrame.ZIndex=6
+local ULL=Instance.new("UIListLayout",ScrollFrame)
+ULL.SortOrder=Enum.SortOrder.LayoutOrder; ULL.Padding=UDim.new(0,4)
 
-local ListLayout = Instance.new("UIListLayout")
-ListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-ListLayout.Padding = UDim.new(0, 5)
-ListLayout.Parent = ScrollFrame
+local StatusBar=Instance.new("Frame",FeedOuter)
+StatusBar.Size=UDim2.new(1,0,0,26); StatusBar.Position=UDim2.new(0,0,1,-26)
+StatusBar.BackgroundColor3=Color3.fromRGB(9,9,17); StatusBar.BorderSizePixel=0; StatusBar.ZIndex=7
 
--- Status bar
-local StatusBar = Instance.new("Frame")
-StatusBar.Size = UDim2.new(1, 0, 0, 26)
-StatusBar.Position = UDim2.new(0, 0, 1, -26)
-StatusBar.BackgroundColor3 = Color3.fromRGB(10, 10, 18)
-StatusBar.BorderSizePixel = 0
-StatusBar.ZIndex = 7
-StatusBar.Parent = FeedFrame
+local SbDot=Instance.new("Frame",StatusBar)
+SbDot.Size=UDim2.new(0,7,0,7); SbDot.Position=UDim2.new(0,10,0.5,-3)
+SbDot.BackgroundColor3=Color3.fromRGB(57,255,20); SbDot.BorderSizePixel=0; SbDot.ZIndex=8
+mkCorner(SbDot,4)
 
-local StatusDot = Instance.new("Frame")
-StatusDot.Size = UDim2.new(0, 7, 0, 7)
-StatusDot.Position = UDim2.new(0, 10, 0.5, -3)
-StatusDot.BackgroundColor3 = Color3.fromRGB(57, 255, 20)
-StatusDot.BorderSizePixel = 0
-StatusDot.ZIndex = 8
-StatusDot.Parent = StatusBar
-Instance.new("UICorner", StatusDot).CornerRadius = UDim.new(1, 0)
+mkLabel(StatusBar,"LARKEN LIVE",9,Color3.fromRGB(48,48,68),Enum.Font.GothamBold,
+    Enum.TextXAlignment.Left,UDim2.new(0,22,0,0),UDim2.new(0,120,1,0),8)
+local CountTxt=mkLabel(StatusBar,"0 NOTIFICATIONS",9,Color3.fromRGB(38,95,38),
+    Enum.Font.GothamBold,Enum.TextXAlignment.Right,
+    UDim2.new(1,-162,0,0),UDim2.new(0,158,1,0),8)
 
-local StatusTxt = Instance.new("TextLabel")
-StatusTxt.Size = UDim2.new(0, 200, 1, 0)
-StatusTxt.Position = UDim2.new(0, 22, 0, 0)
-StatusTxt.BackgroundTransparency = 1
-StatusTxt.Text = "LARKEN LIVE"
-StatusTxt.Font = Enum.Font.GothamBold
-StatusTxt.TextSize = 10
-StatusTxt.TextColor3 = Color3.fromRGB(50, 50, 70)
-StatusTxt.TextXAlignment = Enum.TextXAlignment.Left
-StatusTxt.ZIndex = 8
-StatusTxt.Parent = StatusBar
+-- BLACKLIST PANEL
+local BLPanel=Instance.new("Frame",HubFrame)
+BLPanel.Size=UDim2.new(0,285,0,370); BLPanel.Position=UDim2.new(0.5,-142,0.5,-185)
+BLPanel.BackgroundColor3=Color3.fromRGB(12,10,20); BLPanel.BorderSizePixel=0
+BLPanel.Visible=false; BLPanel.ZIndex=20
+mkCorner(BLPanel,12); mkStroke(BLPanel,Color3.fromRGB(255,75,75),1,0.3)
 
-local CountTxt = Instance.new("TextLabel")
-CountTxt.Size = UDim2.new(0, 180, 1, 0)
-CountTxt.Position = UDim2.new(1, -190, 0, 0)
-CountTxt.BackgroundTransparency = 1
-CountTxt.Text = "0 NOTIFICATIONS"
-CountTxt.Font = Enum.Font.GothamBold
-CountTxt.TextSize = 10
-CountTxt.TextColor3 = Color3.fromRGB(40, 100, 40)
-CountTxt.TextXAlignment = Enum.TextXAlignment.Right
-CountTxt.ZIndex = 8
-CountTxt.Parent = StatusBar
+mkLabel(BLPanel,"BLACKLIST — BRAINROT",11,Color3.fromRGB(255,75,75),
+    Enum.Font.GothamBold,Enum.TextXAlignment.Left,
+    UDim2.new(0,14,0,12),UDim2.new(1,-28,0,18),21)
+mkLabel(BLPanel,"Ajouter = ne rejoint pas + affiche bloque",9,
+    Color3.fromRGB(80,55,55),Enum.Font.Gotham,Enum.TextXAlignment.Left,
+    UDim2.new(0,14,0,30),UDim2.new(1,-28,0,14),21)
 
--- ── TOAST POPUP ──
-local Toast = Instance.new("Frame")
-Toast.Size = UDim2.new(0, 300, 0, 64)
-Toast.Position = UDim2.new(1, 20, 1, -80)
-Toast.BackgroundColor3 = Color3.fromRGB(16, 16, 26)
-Toast.BorderSizePixel = 0
-Toast.ZIndex = 20
-Toast.Parent = ScreenGui
-Instance.new("UICorner", Toast).CornerRadius = UDim.new(0, 12)
-local ToastStroke = Instance.new("UIStroke", Toast)
-ToastStroke.Color = Color3.fromRGB(57, 255, 20)
-ToastStroke.Thickness = 1
-ToastStroke.Transparency = 0.3
+local BLInput=Instance.new("TextBox",BLPanel)
+BLInput.Size=UDim2.new(1,-28,0,34); BLInput.Position=UDim2.new(0,14,0,50)
+BLInput.BackgroundColor3=Color3.fromRGB(8,8,16); BLInput.BorderSizePixel=0
+BLInput.PlaceholderText="Nom exact du brainrot..."; BLInput.Text=""
+BLInput.Font=Enum.Font.Gotham; BLInput.TextSize=12
+BLInput.TextColor3=Color3.fromRGB(215,215,255); BLInput.PlaceholderColor3=Color3.fromRGB(48,38,55)
+BLInput.ClearTextOnFocus=false; BLInput.ZIndex=22
+mkCorner(BLInput,7); mkStroke(BLInput,Color3.fromRGB(255,75,75),1,0.6)
 
-local ToastTitle = Instance.new("TextLabel")
-ToastTitle.Size = UDim2.new(1, -14, 0, 20)
-ToastTitle.Position = UDim2.new(0, 12, 0, 8)
-ToastTitle.BackgroundTransparency = 1
-ToastTitle.Text = "✓ SERVEUR REJOINT"
-ToastTitle.Font = Enum.Font.GothamBold
-ToastTitle.TextSize = 11
-ToastTitle.TextColor3 = Color3.fromRGB(57, 255, 20)
-ToastTitle.TextXAlignment = Enum.TextXAlignment.Left
-ToastTitle.ZIndex = 21
-ToastTitle.Parent = Toast
+local BLAddBtn=Instance.new("TextButton",BLPanel)
+BLAddBtn.Size=UDim2.new(1,-28,0,32); BLAddBtn.Position=UDim2.new(0,14,0,90)
+BLAddBtn.BackgroundColor3=Color3.fromRGB(175,0,55); BLAddBtn.BorderSizePixel=0
+BLAddBtn.Text="AJOUTER / RETIRER"; BLAddBtn.Font=Enum.Font.GothamBold
+BLAddBtn.TextSize=11; BLAddBtn.TextColor3=Color3.fromRGB(255,255,255); BLAddBtn.ZIndex=22
+mkCorner(BLAddBtn,7)
 
-local ToastName = Instance.new("TextLabel")
-ToastName.Size = UDim2.new(1, -14, 0, 18)
-ToastName.Position = UDim2.new(0, 12, 0, 26)
-ToastName.BackgroundTransparency = 1
-ToastName.Text = ""
-ToastName.Font = Enum.Font.GothamBold
-ToastName.TextSize = 13
-ToastName.TextColor3 = Color3.fromRGB(255, 255, 255)
-ToastName.TextXAlignment = Enum.TextXAlignment.Left
-ToastName.ZIndex = 21
-ToastName.Parent = Toast
+mkLabel(BLPanel,"LISTE ACTUELLE :",10,Color3.fromRGB(90,90,120),Enum.Font.Gotham,
+    Enum.TextXAlignment.Left,UDim2.new(0,14,0,130),UDim2.new(1,-28,0,16),21)
 
-local ToastSub = Instance.new("TextLabel")
-ToastSub.Size = UDim2.new(1, -14, 0, 14)
-ToastSub.Position = UDim2.new(0, 12, 0, 44)
-ToastSub.BackgroundTransparency = 1
-ToastSub.Text = ""
-ToastSub.Font = Enum.Font.Gotham
-ToastSub.TextSize = 10
-ToastSub.TextColor3 = Color3.fromRGB(80, 80, 100)
-ToastSub.TextXAlignment = Enum.TextXAlignment.Left
-ToastSub.ZIndex = 21
-ToastSub.Parent = Toast
+local BLScroll=Instance.new("ScrollingFrame",BLPanel)
+BLScroll.Size=UDim2.new(1,-28,0,158); BLScroll.Position=UDim2.new(0,14,0,150)
+BLScroll.BackgroundColor3=Color3.fromRGB(8,8,16); BLScroll.BorderSizePixel=0
+BLScroll.ScrollBarThickness=2; BLScroll.ScrollBarImageColor3=Color3.fromRGB(255,75,75)
+BLScroll.CanvasSize=UDim2.new(0,0,0,0); BLScroll.AutomaticCanvasSize=Enum.AutomaticSize.Y
+BLScroll.ZIndex=21
+mkCorner(BLScroll,7)
+local BLULL=Instance.new("UIListLayout",BLScroll)
+BLULL.SortOrder=Enum.SortOrder.LayoutOrder; BLULL.Padding=UDim.new(0,3)
+
+local BLCloseBtn=Instance.new("TextButton",BLPanel)
+BLCloseBtn.Size=UDim2.new(1,-28,0,30); BLCloseBtn.Position=UDim2.new(0,14,1,-44)
+BLCloseBtn.BackgroundColor3=Color3.fromRGB(22,22,38); BLCloseBtn.BorderSizePixel=0
+BLCloseBtn.Text="FERMER"; BLCloseBtn.Font=Enum.Font.GothamBold
+BLCloseBtn.TextSize=11; BLCloseBtn.TextColor3=Color3.fromRGB(140,140,170); BLCloseBtn.ZIndex=22
+mkCorner(BLCloseBtn,7)
+
+-- TOAST
+local Toast=Instance.new("Frame",ScreenGui)
+Toast.Size=UDim2.new(0,315,0,68); Toast.Position=UDim2.new(1,20,1,-92)
+Toast.BackgroundColor3=Color3.fromRGB(13,13,23); Toast.BorderSizePixel=0; Toast.ZIndex=30
+mkCorner(Toast,12); mkStroke(Toast,Color3.fromRGB(57,255,20),1,0.22)
+mkLabel(Toast,"SERVEUR REJOINT",10,Color3.fromRGB(57,255,20),Enum.Font.GothamBold,
+    Enum.TextXAlignment.Left,UDim2.new(0,12,0,8),UDim2.new(1,-14,0,18),31)
+local ToastName=mkLabel(Toast,"",13,Color3.fromRGB(255,255,255),Enum.Font.GothamBold,
+    Enum.TextXAlignment.Left,UDim2.new(0,12,0,26),UDim2.new(1,-14,0,20),31)
+local ToastSub=mkLabel(Toast,"",10,Color3.fromRGB(65,65,95),Enum.Font.Gotham,
+    Enum.TextXAlignment.Left,UDim2.new(0,12,0,46),UDim2.new(1,-14,0,15),31)
 
 -- ══════════════════════════════════════════
---              LOGIQUE HUB
+--              ÉTAT
 -- ══════════════════════════════════════════
-local autoJoin = false
-local activeFilter = 0
-local notifCount = 0
-local cardOrder = 0
-local toastTimer = nil
+local autoJoin=false; local activeFilter=0
+local notifCount=0; local cardOrder=0
+local minimized=false; local toastTimer=nil
+local accessLevel="normal"
 
-local function showToast(brainrot, server, speed)
-    ToastName.Text = brainrot.name .. "  •  " .. brainrot.secret
-    ToastSub.Text = server .. "  |  " .. speed .. "M/s"
-    TweenService:Create(Toast, TweenInfo.new(0.35, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
-        Position = UDim2.new(1, -310, 1, -80)
-    }):Play()
+-- ══════════════════════════════════════════
+--              FONCTIONS
+-- ══════════════════════════════════════════
+local function refreshBLPanel()
+    for _,c in ipairs(BLScroll:GetChildren()) do
+        if c:IsA("TextLabel") or c:IsA("Frame") then c:Destroy() end
+    end
+    local i=0
+    for name,_ in pairs(blacklist) do
+        i=i+1
+        local lbl=Instance.new("TextLabel",BLScroll)
+        lbl.Size=UDim2.new(1,-6,0,22); lbl.BackgroundColor3=Color3.fromRGB(38,10,10)
+        lbl.BorderSizePixel=0; lbl.Text="  🚫  "..name
+        lbl.Font=Enum.Font.Gotham; lbl.TextSize=11
+        lbl.TextColor3=Color3.fromRGB(210,90,90)
+        lbl.TextXAlignment=Enum.TextXAlignment.Left
+        lbl.ZIndex=22; lbl.LayoutOrder=i
+        mkCorner(lbl,5)
+    end
+    if i==0 then
+        local e=Instance.new("TextLabel",BLScroll)
+        e.Size=UDim2.new(1,-6,0,22); e.BackgroundTransparency=1
+        e.Text="(liste vide)"; e.Font=Enum.Font.Gotham; e.TextSize=10
+        e.TextColor3=Color3.fromRGB(55,55,75); e.TextXAlignment=Enum.TextXAlignment.Center; e.ZIndex=22
+    end
+end
+
+local function showToast(brainrot,server,speed)
+    ToastName.Text=brainrot.name
+    ToastSub.Text=server.."  |  "..speed.."M/s"
+    TweenService:Create(Toast,TweenInfo.new(0.35,Enum.EasingStyle.Quart,Enum.EasingDirection.Out),
+        {Position=UDim2.new(1,-325,1,-92)}):Play()
     if toastTimer then task.cancel(toastTimer) end
-    toastTimer = task.delay(3.5, function()
-        TweenService:Create(Toast, TweenInfo.new(0.35, Enum.EasingStyle.Quart, Enum.EasingDirection.In), {
-            Position = UDim2.new(1, 20, 1, -80)
-        }):Play()
+    toastTimer=task.delay(3.5,function()
+        TweenService:Create(Toast,TweenInfo.new(0.3,Enum.EasingStyle.Quart,Enum.EasingDirection.In),
+            {Position=UDim2.new(1,20,1,-92)}):Play()
     end)
 end
 
--- PlaceId officiel de Steal a Brainrot
-local STEAL_BRAINROT_PLACE_ID = 109983668079237
+local function doJoin(brainrot,server,speed,joinBtn)
+    if joinBtn.Text=="JOINED" or joinBtn.Text=="BLACKLISTED" or not joinBtn.Active then return end
+    joinBtn.Text="JOINING..."; joinBtn.Active=false
+    joinBtn.BackgroundColor3=Color3.fromRGB(26,26,45)
 
-local function doJoinServer(brainrot, server, speed, joinBtn)
-    if joinBtn.Text == "JOINED" then return end
-    joinBtn.Text = "JOINING..."
-    joinBtn.Active = false
-    joinBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 50)
-
-    task.delay(randInt(8, 18) / 10, function()
-        joinBtn.Text = "JOINED"
-        joinBtn.BackgroundColor3 = Color3.fromRGB(57, 255, 20)
-        joinBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
-        showToast(brainrot, server, speed)
-
-        -- Téléport vers un serveur aléatoire de Steal a Brainrot
-        task.delay(0.8, function()
-            local TeleportService = game:GetService("TeleportService")
-            local HttpService = game:GetService("HttpService")
-
-            local success, result = pcall(function()
-                -- Récupère la liste des serveurs publics via l'API Roblox
-                local url = "https://games.roblox.com/v1/games/"
-                    .. STEAL_BRAINROT_PLACE_ID
-                    .. "/servers/Public?sortOrder=Asc&limit=100"
-
-                local response = game:HttpGet(url)
-                local data = HttpService:JSONDecode(response)
-
-                if data and data.data and #data.data > 0 then
-                    -- Filtre les serveurs avec de la place disponible
-                    local available = {}
-                    for _, srv in ipairs(data.data) do
-                        if srv.playing < srv.maxPlayers then
-                            table.insert(available, srv)
-                        end
+    task.delay(randInt(8,18)/10,function()
+        joinBtn.Text="JOINED"
+        joinBtn.BackgroundColor3=Color3.fromRGB(57,255,20)
+        joinBtn.TextColor3=Color3.fromRGB(0,0,0)
+        showToast(brainrot,server,speed)
+        task.delay(0.6,function()
+            local TS=game:GetService("TeleportService")
+            local ok,_=pcall(function()
+                local url="https://games.roblox.com/v1/games/"..PLACE_ID.."/servers/Public?sortOrder=Asc&limit=100"
+                local resp=game:HttpGet(url)
+                local data=HttpService:JSONDecode(resp)
+                if data and data.data and #data.data>0 then
+                    local avail={}
+                    for _,s in ipairs(data.data) do
+                        if s.playing<s.maxPlayers then table.insert(avail,s) end
                     end
-
-                    local targets = #available > 0 and available or data.data
-                    local picked = targets[math.random(#targets)]
-
-                    -- Téléporte vers ce serveur précis
-                    TeleportService:TeleportToPlaceInstance(
-                        STEAL_BRAINROT_PLACE_ID,
-                        picked.id,
-                        LocalPlayer
-                    )
+                    local pool=#avail>0 and avail or data.data
+                    local picked=pool[math.random(#pool)]
+                    TS:TeleportToPlaceInstance(PLACE_ID,picked.id,LocalPlayer)
                 else
-                    -- Fallback : téléport simple vers le jeu
-                    TeleportService:Teleport(STEAL_BRAINROT_PLACE_ID, LocalPlayer)
+                    TS:Teleport(PLACE_ID,LocalPlayer)
                 end
             end)
-
-            if not success then
-                -- Fallback si l'API échoue
-                pcall(function()
-                    TeleportService:Teleport(STEAL_BRAINROT_PLACE_ID, LocalPlayer)
-                end)
-            end
+            if not ok then pcall(function() TS:Teleport(PLACE_ID,LocalPlayer) end) end
         end)
     end)
 end
 
-local function createCard(brainrot, speed, server, isNew)
-    cardOrder = cardOrder + 1
-    local speed_val = speed or randInt(15, 380)
-    local srv = server or randItem(SERVERS)
-    local tier = speed_val >= 100 and 3 or speed_val >= 40 and 2 or 1
+local function createCard(brainrot,speed,server,isNew)
+    local blocked=isBlacklisted(brainrot.name)
+    if activeFilter~=0 and brainrot.tier~=activeFilter then return end
+    -- Tier 3 visible seulement supreme/dev
+    if brainrot.tier==3 and accessLevel=="normal" then return end
 
-    -- Filtre actif
-    if activeFilter ~= 0 and tier ~= activeFilter then return end
+    notifCount=notifCount+1; cardOrder=cardOrder+1
+    CountTxt.Text=notifCount.." NOTIFICATIONS"
 
-    notifCount = notifCount + 1
-    CountTxt.Text = notifCount .. " NOTIFICATIONS"
+    local spd=speed or randInt(15,380)
+    local srv=server or randItem(SERVERS)
+    local tc=brainrot.tier==3 and Color3.fromRGB(255,45,120)
+           or brainrot.tier==2 and Color3.fromRGB(255,107,0)
+           or Color3.fromRGB(100,180,255)
+    local tt=brainrot.tier==3 and "TIER 3  •  100M+ MAX"
+           or brainrot.tier==2 and "TIER 2  •  25M-100M"
+           or "TIER 1  •  1M-25M"
+    local bc=brainrot.tier==2 and Color3.fromRGB(205,92,0) or Color3.fromRGB(185,0,72)
 
-    local tierColor = tier == 3 and Color3.fromRGB(255,45,120)
-                   or tier == 2 and Color3.fromRGB(255,107,0)
-                   or Color3.fromRGB(100, 180, 255)
+    local card=Instance.new("Frame",ScrollFrame)
+    card.Name="Card_"..cardOrder
+    card.Size=UDim2.new(1,-8,0,84)
+    card.BackgroundColor3=blocked and Color3.fromRGB(20,8,8) or Color3.fromRGB(16,16,26)
+    card.BorderSizePixel=0; card.LayoutOrder=-cardOrder; card.ZIndex=7
+    mkCorner(card,9)
 
-    local tierTag = tier == 3 and "TIER 3  •  100M+ MAX"
-                 or tier == 2 and "TIER 2  •  25M-100M"
-                 or "TIER 1  •  1M-25M"
+    local ab=Instance.new("Frame",card)
+    ab.Size=UDim2.new(0,3,1,-14); ab.Position=UDim2.new(0,0,0,7)
+    ab.BackgroundColor3=blocked and Color3.fromRGB(110,28,28) or tc
+    ab.BorderSizePixel=0; ab.ZIndex=8; mkCorner(ab,2)
 
-    -- Card container
-    local card = Instance.new("Frame")
-    card.Name = "Card_" .. cardOrder
-    card.Size = UDim2.new(1, -8, 0, 78)
-    card.BackgroundColor3 = Color3.fromRGB(18, 18, 28)
-    card.BorderSizePixel = 0
-    card.LayoutOrder = -cardOrder
-    card.ZIndex = 7
-    card.Parent = ScrollFrame
-    Instance.new("UICorner", card).CornerRadius = UDim.new(0, 9)
+    mkLabel(card,tt,8,Color3.fromRGB(65,65,88),Enum.Font.GothamBold,
+        Enum.TextXAlignment.Left,UDim2.new(0,12,0,7),UDim2.new(0,220,0,14),8)
+    mkLabel(card,(blocked and "🚫 " or "")..brainrot.name,14,
+        blocked and Color3.fromRGB(155,55,55) or Color3.fromRGB(222,222,255),
+        Enum.Font.GothamBold,Enum.TextXAlignment.Left,
+        UDim2.new(0,12,0,22),UDim2.new(0,290,0,20),8)
+    mkLabel(card,"SECRET: "..brainrot.secret,9,
+        blocked and Color3.fromRGB(95,35,35) or tc,
+        Enum.Font.GothamBold,Enum.TextXAlignment.Left,
+        UDim2.new(0,12,0,43),UDim2.new(0,310,0,14),8)
+    mkLabel(card,spd.."M/s  •  "..srv,9,Color3.fromRGB(50,50,70),
+        Enum.Font.Gotham,Enum.TextXAlignment.Left,
+        UDim2.new(0,12,0,58),UDim2.new(0,290,0,14),8)
 
-    -- Left accent bar
-    local accentBar = Instance.new("Frame")
-    accentBar.Size = UDim2.new(0, 3, 1, -16)
-    accentBar.Position = UDim2.new(0, 0, 0, 8)
-    accentBar.BackgroundColor3 = tierColor
-    accentBar.BorderSizePixel = 0
-    accentBar.ZIndex = 8
-    accentBar.Parent = card
-    Instance.new("UICorner", accentBar).CornerRadius = UDim.new(0, 2)
+    local joinBtn=Instance.new("TextButton",card)
+    joinBtn.Size=UDim2.new(0,78,0,30); joinBtn.Position=UDim2.new(1,-86,0.5,-15)
+    joinBtn.BorderSizePixel=0; joinBtn.Font=Enum.Font.GothamBold
+    joinBtn.TextSize=10; joinBtn.ZIndex=9
+    mkCorner(joinBtn,7)
 
-    -- Tier tag
-    local tagLbl = Instance.new("TextLabel")
-    tagLbl.Size = UDim2.new(0, 200, 0, 16)
-    tagLbl.Position = UDim2.new(0, 14, 0, 8)
-    tagLbl.BackgroundTransparency = 1
-    tagLbl.Text = tierTag
-    tagLbl.Font = Enum.Font.GothamBold
-    tagLbl.TextSize = 9
-    tagLbl.TextColor3 = Color3.fromRGB(80, 80, 100)
-    tagLbl.TextXAlignment = Enum.TextXAlignment.Left
-    tagLbl.ZIndex = 8
-    tagLbl.Parent = card
-
-    -- Nom PUBLIC
-    local nameLbl = Instance.new("TextLabel")
-    nameLbl.Size = UDim2.new(0, 250, 0, 20)
-    nameLbl.Position = UDim2.new(0, 14, 0, 24)
-    nameLbl.BackgroundTransparency = 1
-    nameLbl.Text = brainrot.name
-    nameLbl.Font = Enum.Font.GothamBold
-    nameLbl.TextSize = 15
-    nameLbl.TextColor3 = Color3.fromRGB(230, 230, 255)
-    nameLbl.TextXAlignment = Enum.TextXAlignment.Left
-    nameLbl.ZIndex = 8
-    nameLbl.Parent = card
-
-    -- Nom SECRET (en dessous, plus petit, coloré)
-    local secretLbl = Instance.new("TextLabel")
-    secretLbl.Size = UDim2.new(0, 260, 0, 15)
-    secretLbl.Position = UDim2.new(0, 14, 0, 44)
-    secretLbl.BackgroundTransparency = 1
-    secretLbl.Text = "SECRET: " .. brainrot.secret
-    secretLbl.Font = Enum.Font.GothamBold
-    secretLbl.TextSize = 10
-    secretLbl.TextColor3 = tierColor
-    secretLbl.TextXAlignment = Enum.TextXAlignment.Left
-    secretLbl.ZIndex = 8
-    secretLbl.Parent = card
-
-    -- Speed
-    local speedLbl = Instance.new("TextLabel")
-    speedLbl.Size = UDim2.new(0, 100, 0, 14)
-    speedLbl.Position = UDim2.new(0, 14, 0, 59)
-    speedLbl.BackgroundTransparency = 1
-    speedLbl.Text = speed_val .. "M/s  •  " .. srv
-    speedLbl.Font = Enum.Font.Gotham
-    speedLbl.TextSize = 9
-    speedLbl.TextColor3 = Color3.fromRGB(60, 60, 80)
-    speedLbl.TextXAlignment = Enum.TextXAlignment.Left
-    speedLbl.ZIndex = 8
-    speedLbl.Parent = card
-
-    -- JOIN button
-    local joinBtn = Instance.new("TextButton")
-    joinBtn.Size = UDim2.new(0, 80, 0, 30)
-    joinBtn.Position = UDim2.new(1, -90, 0.5, -15)
-    joinBtn.BackgroundColor3 = tier == 2 and Color3.fromRGB(255,107,0) or Color3.fromRGB(200,0,80)
-    joinBtn.BorderSizePixel = 0
-    joinBtn.Text = "JOIN"
-    joinBtn.Font = Enum.Font.GothamBold
-    joinBtn.TextSize = 12
-    joinBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    joinBtn.ZIndex = 9
-    joinBtn.Parent = card
-    Instance.new("UICorner", joinBtn).CornerRadius = UDim.new(0, 7)
-
-    joinBtn.MouseButton1Click:Connect(function()
-        doJoinServer(brainrot, srv, speed_val, joinBtn)
-    end)
-
-    -- Animation entrée
-    card.BackgroundTransparency = 1
-    TweenService:Create(card, TweenInfo.new(0.3, Enum.EasingStyle.Quart), {
-        BackgroundTransparency = 0
-    }):Play()
-
-    -- Auto join si activé
-    if autoJoin and isNew then
-        task.delay(0.5, function()
-            doJoinServer(brainrot, srv, speed_val, joinBtn)
+    if blocked then
+        joinBtn.Text="BLACKLISTED"
+        joinBtn.BackgroundColor3=Color3.fromRGB(55,18,18)
+        joinBtn.TextColor3=Color3.fromRGB(150,55,55)
+        joinBtn.Active=false
+    else
+        joinBtn.Text="JOIN"
+        joinBtn.BackgroundColor3=bc
+        joinBtn.TextColor3=Color3.fromRGB(255,255,255)
+        joinBtn.Active=true
+        joinBtn.MouseButton1Click:Connect(function()
+            doJoin(brainrot,srv,spd,joinBtn)
         end)
     end
 
-    -- Scroll en haut
-    ScrollFrame.CanvasPosition = Vector2.new(0, 0)
+    card.BackgroundTransparency=1
+    TweenService:Create(card,TweenInfo.new(0.22,Enum.EasingStyle.Quart),
+        {BackgroundTransparency=0}):Play()
+    ScrollFrame.CanvasPosition=Vector2.new(0,0)
+
+    if autoJoin and isNew and not blocked then
+        task.delay(0.35,function() doJoin(brainrot,srv,spd,joinBtn) end)
+    end
 end
 
--- ══════════════════════════════════════════
---         LOGIQUE DES BOUTONS
--- ══════════════════════════════════════════
+local function pickRandom() return RARITY_POOL[math.random(#RARITY_POOL)] end
 
--- Tier filter
-for i, tb in ipairs(tierButtons) do
-    tb.MouseButton1Click:Connect(function()
-        activeFilter = (activeFilter == i) and 0 or i
-        for j, b in ipairs(tierButtons) do
-            b.BackgroundTransparency = (activeFilter == j) and 0.2 or 0
-        end
-        -- Rafraichir visibilité
-        for _, child in ipairs(ScrollFrame:GetChildren()) do
-            if child:IsA("Frame") and child.Name:sub(1,5) == "Card_" then
-                -- On cache ou montre selon le tier
-                -- (tier stocké dans accentBar color)
-                child.Visible = true -- simplifié : on refiltre par rebuild si besoin
+local function loadInitial()
+    local seen,count={},0
+    local attempts=0
+    while count<10 and attempts<100 do
+        attempts=attempts+1
+        local b=pickRandom()
+        if not seen[b.name] then
+            if not (b.tier==3 and accessLevel=="normal") then
+                seen[b.name]=true; count=count+1
+                local c=count
+                task.delay((c-1)*0.07,function() createCard(b,nil,nil,false) end)
             end
         end
-    end)
+    end
 end
 
--- Auto Join
-AJBtn.MouseButton1Click:Connect(function()
-    autoJoin = not autoJoin
-    AJBtn.Text = autoJoin and "AUTO JOIN: ON" or "AUTO JOIN: OFF"
-    AJBtn.BackgroundColor3 = autoJoin and Color3.fromRGB(10,40,10) or Color3.fromRGB(15,35,15)
-    AJStroke.Transparency = autoJoin and 0.1 or 0.6
-end)
+local function openHub(level)
+    accessLevel=level
+    KeyFrame.Visible=false; HubFrame.Visible=true
 
--- Clear All
-ClearBtn.MouseButton1Click:Connect(function()
-    for _, child in ipairs(ScrollFrame:GetChildren()) do
-        if child:IsA("Frame") then child:Destroy() end
+    if level=="dev" then
+        AccessBadge.Text="✦ DEVELOPPEUR"
+        AccessBadge.TextColor3=Color3.fromRGB(57,255,20)
+        AccessBadge.BackgroundColor3=Color3.fromRGB(8,32,8)
+        HubStroke.Color=Color3.fromRGB(57,255,20)
+    elseif level=="supreme" then
+        AccessBadge.Text="★ SUPREME"
+        AccessBadge.TextColor3=Color3.fromRGB(255,215,0)
+        AccessBadge.BackgroundColor3=Color3.fromRGB(32,26,0)
+        HubStroke.Color=Color3.fromRGB(255,215,0)
+        HubStroke.Transparency=0
+    else
+        AccessBadge.Text="NORMAL"
+        AccessBadge.TextColor3=Color3.fromRGB(130,130,170)
     end
-    notifCount = 0
-    CountTxt.Text = "0 NOTIFICATIONS"
-end)
 
--- Close
-CloseBtn.MouseButton1Click:Connect(function()
-    TweenService:Create(HubFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quart), {
-        Size = UDim2.new(0, 0, 0, 0),
-        Position = UDim2.new(0.5, 0, 0.5, 0)
-    }):Play()
-    task.delay(0.3, function() HubFrame.Visible = false end)
-end)
-
--- Minimize
-local minimized = false
-MinBtn.MouseButton1Click:Connect(function()
-    minimized = not minimized
-    TweenService:Create(HubFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quart), {
-        Size = minimized and UDim2.new(0, 720, 0, 40) or UDim2.new(0, 720, 0, 480)
-    }):Play()
-    MinBtn.Text = minimized and "+" or "—"
-end)
-
--- ══════════════════════════════════════════
---           VALIDATION CLÉ
--- ══════════════════════════════════════════
-local function openHub()
-    KeyFrame.Visible = false
-    HubFrame.Visible = true
-    HubFrame.Size = UDim2.new(0, 0, 0, 0)
-    HubFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
-    TweenService:Create(HubFrame, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-        Size = UDim2.new(0, 720, 0, 480),
-        Position = UDim2.new(0.5, -360, 0.5, -240)
+    HubFrame.Size=UDim2.new(0,0,0,0)
+    HubFrame.Position=UDim2.new(0.5,0,0.5,0)
+    TweenService:Create(HubFrame,TweenInfo.new(0.4,Enum.EasingStyle.Back,Enum.EasingDirection.Out),{
+        Size=UDim2.new(0,790,0,530),
+        Position=UDim2.new(0.5,-395,0.5,-265)
     }):Play()
 
-    -- Charger brainrots initiaux
-    task.delay(0.5, function()
-        local shuffled = {}
-        for _, b in ipairs(BRAINROTS) do table.insert(shuffled, b) end
-        -- Shuffle
-        for i = #shuffled, 2, -1 do
-            local j = math.random(i)
-            shuffled[i], shuffled[j] = shuffled[j], shuffled[i]
-        end
-        for k = 1, math.min(8, #shuffled) do
-            task.delay((k-1)*0.08, function()
-                createCard(shuffled[k], nil, nil, false)
-            end)
-        end
-    end)
+    task.delay(0.45,loadInitial)
 
-    -- Live feed toutes les 3-7 secondes
+    -- Live feed
     task.spawn(function()
         while HubFrame.Visible do
-            task.wait(randInt(30, 70) / 10)
-            local br = randItem(BRAINROTS)
-            createCard(br, nil, nil, true)
+            task.wait(randInt(28,65)/10)
+            if not minimized then createCard(pickRandom(),nil,nil,true) end
         end
     end)
 
-    -- Clignotement status dot
+    -- Dot blink
     task.spawn(function()
-        while true do
+        while HubFrame.Visible do
             task.wait(0.7)
-            TweenService:Create(StatusDot, TweenInfo.new(0.4), {
-                BackgroundTransparency = 0.8
-            }):Play()
+            TweenService:Create(SbDot,TweenInfo.new(0.4),{BackgroundTransparency=0.8}):Play()
             task.wait(0.4)
-            TweenService:Create(StatusDot, TweenInfo.new(0.4), {
-                BackgroundTransparency = 0
-            }):Play()
+            TweenService:Create(SbDot,TweenInfo.new(0.4),{BackgroundTransparency=0}):Play()
         end
     end)
+end
+
+-- ══════════════════════════════════════════
+--              BOUTONS
+-- ══════════════════════════════════════════
+for i,tb in ipairs(tierBtns) do
+    tb.MouseButton1Click:Connect(function()
+        activeFilter=activeFilter==i and 0 or i
+        for j,b in ipairs(tierBtns) do
+            b.BackgroundTransparency=activeFilter==j and 0.28 or 0
+        end
+        for _,c in ipairs(ScrollFrame:GetChildren()) do
+            if c:IsA("Frame") then c.Visible=true end
+        end
+    end)
+end
+
+AJBtn.MouseButton1Click:Connect(function()
+    autoJoin=not autoJoin
+    AJBtn.Text=autoJoin and "AUTO JOIN: ON" or "AUTO JOIN: OFF"
+    AJBtn.BackgroundColor3=autoJoin and Color3.fromRGB(6,36,6) or Color3.fromRGB(12,30,12)
+    local s=AJBtn:FindFirstChildOfClass("UIStroke")
+    if s then s.Transparency=autoJoin and 0.05 or 0.6 end
+end)
+
+ClearBtn.MouseButton1Click:Connect(function()
+    for _,c in ipairs(ScrollFrame:GetChildren()) do
+        if c:IsA("Frame") then c:Destroy() end
+    end
+    notifCount=0; cardOrder=0; CountTxt.Text="0 NOTIFICATIONS"
+end)
+
+-- MINIMIZE — garde le topbar, ClipsDescendants cache le reste
+MinBtn.MouseButton1Click:Connect(function()
+    minimized=not minimized
+    TweenService:Create(HubFrame,TweenInfo.new(0.3,Enum.EasingStyle.Quart),{
+        Size=minimized and UDim2.new(0,790,0,42) or UDim2.new(0,790,0,530)
+    }):Play()
+    MinBtn.Text=minimized and "+" or "—"
+end)
+
+CloseBtn.MouseButton1Click:Connect(function()
+    TweenService:Create(HubFrame,TweenInfo.new(0.25,Enum.EasingStyle.Quart),{
+        Size=UDim2.new(0,0,0,0),Position=UDim2.new(0.5,0,0.5,0)
+    }):Play()
+    task.delay(0.3,function() HubFrame.Visible=false end)
+end)
+
+BLBtn.MouseButton1Click:Connect(function()
+    BLPanel.Visible=not BLPanel.Visible
+    if BLPanel.Visible then refreshBLPanel() end
+end)
+BLCloseBtn.MouseButton1Click:Connect(function() BLPanel.Visible=false end)
+BLAddBtn.MouseButton1Click:Connect(function()
+    local name=BLInput.Text:match("^%s*(.-)%s*$")
+    if name~="" then
+        toggleBlacklist(name); BLInput.Text=""; refreshBLPanel()
+    end
+end)
+
+-- ══════════════════════════════════════════
+--         VALIDATION CLÉ
+-- ══════════════════════════════════════════
+local function shakeBox()
+    local orig=KeyBox.Position
+    for i=1,5 do
+        task.wait(0.04)
+        KeyBox.Position=UDim2.new(orig.X.Scale,orig.X.Offset+(i%2==0 and 9 or -9),orig.Y.Scale,orig.Y.Offset)
+    end
+    task.wait(0.04); KeyBox.Position=orig
 end
 
 KeyBtn.MouseButton1Click:Connect(function()
-    local key = KeyInput.Text:upper():gsub("%s+","")
-    if isValidKey(key) then
-        KeyError.Visible = false
-        openHub()
+    local raw=KeyInput.Text:match("^%s*(.-)%s*$")
+    local result=checkKey(raw)
+    if result=="dev" then
+        openHub("dev")
+    elseif result=="not_dev" then
+        KeyError.Text="VOUS N'ETES PAS DEVELOPPEUR"; shakeBox()
+    elseif result=="supreme" then
+        openHub("supreme")
+    elseif result=="normal" then
+        openHub("normal")
+    elseif result=="used" then
+        KeyError.Text="CLE DEJA UTILISEE — ACCES REFUSE"; shakeBox()
     else
-        KeyError.Visible = true
-        -- Shake animation
-        local origPos = KeyBox.Position
-        for i = 1, 4 do
-            task.wait(0.04)
-            KeyBox.Position = UDim2.new(origPos.X.Scale, origPos.X.Offset + (i%2==0 and 8 or -8), origPos.Y.Scale, origPos.Y.Offset)
-        end
-        task.wait(0.04)
-        KeyBox.Position = origPos
+        KeyError.Text="CLE INVALIDE — ACCES REFUSE"; shakeBox()
     end
 end)
 
--- Enter key sur TextBox
-KeyInput.FocusLost:Connect(function(enterPressed)
-    if enterPressed then
-        KeyBtn:Click()
-    end
+KeyInput.FocusLost:Connect(function(enter)
+    if enter then KeyBtn:Click() end
 end)
 
-print("[LARKEN] Hub charge avec succes — Synapse/KRNL/Fluxus/Delta")
-print("[LARKEN] 100 cles disponibles | Format: LRKN-XXXX-XXXX-XXXX")
-print("[LARKEN] Cle test: LRKN-A1B2-C3D4-E5F6")
+print("[LARKEN v3.0] Charge avec succes !")
+print("[LARKEN] Normal: 100 cles  |  Supreme: 100 cles  |  Dev: DEV-LARKEN-2025")
+print("[LARKEN] Devs: compte634tyconts, Aiko59_brt, KAYZZOXX1")
+print("[LARKEN] PlaceId: "..PLACE_ID)
