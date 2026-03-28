@@ -548,31 +548,66 @@ local function showToast(brainrot, server, speed)
     end)
 end
 
+-- PlaceId officiel de Steal a Brainrot
+local STEAL_BRAINROT_PLACE_ID = 109983668079237
+
 local function doJoinServer(brainrot, server, speed, joinBtn)
     if joinBtn.Text == "JOINED" then return end
     joinBtn.Text = "JOINING..."
     joinBtn.Active = false
     joinBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 50)
 
-    task.delay(randInt(8,18)/10, function()
+    task.delay(randInt(8, 18) / 10, function()
         joinBtn.Text = "JOINED"
         joinBtn.BackgroundColor3 = Color3.fromRGB(57, 255, 20)
         joinBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
+        showToast(brainrot, server, speed)
 
-        -- Teleport vers un serveur aléatoire du même jeu
-        local success, err = pcall(function()
+        -- Téléport vers un serveur aléatoire de Steal a Brainrot
+        task.delay(0.8, function()
             local TeleportService = game:GetService("TeleportService")
-            local servers = TeleportService:GetSortedGameInstances(game.PlaceId, 25)
-            if servers and #servers > 0 then
-                local target = servers[math.random(#servers)]
-                TeleportService:TeleportToPlaceInstance(game.PlaceId, target.JobId, LocalPlayer)
-            else
-                -- Fallback: rejoin le même jeu
-                TeleportService:Teleport(game.PlaceId, LocalPlayer)
+            local HttpService = game:GetService("HttpService")
+
+            local success, result = pcall(function()
+                -- Récupère la liste des serveurs publics via l'API Roblox
+                local url = "https://games.roblox.com/v1/games/"
+                    .. STEAL_BRAINROT_PLACE_ID
+                    .. "/servers/Public?sortOrder=Asc&limit=100"
+
+                local response = game:HttpGet(url)
+                local data = HttpService:JSONDecode(response)
+
+                if data and data.data and #data.data > 0 then
+                    -- Filtre les serveurs avec de la place disponible
+                    local available = {}
+                    for _, srv in ipairs(data.data) do
+                        if srv.playing < srv.maxPlayers then
+                            table.insert(available, srv)
+                        end
+                    end
+
+                    local targets = #available > 0 and available or data.data
+                    local picked = targets[math.random(#targets)]
+
+                    -- Téléporte vers ce serveur précis
+                    TeleportService:TeleportToPlaceInstance(
+                        STEAL_BRAINROT_PLACE_ID,
+                        picked.id,
+                        LocalPlayer
+                    )
+                else
+                    -- Fallback : téléport simple vers le jeu
+                    TeleportService:Teleport(STEAL_BRAINROT_PLACE_ID, LocalPlayer)
+                end
+            end)
+
+            if not success then
+                -- Fallback si l'API échoue
+                pcall(function()
+                    TeleportService:Teleport(STEAL_BRAINROT_PLACE_ID, LocalPlayer)
+                end)
             end
         end)
-
-        showToast(brainrot, server, speed)
     end)
 end
 
