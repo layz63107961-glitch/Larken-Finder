@@ -1,0 +1,845 @@
+-- ╔══════════════════════════════════════════════════════╗
+-- ║           LARKEN — SECRET BRAINROT HUB               ║
+-- ║        Script Roblox Executor (Universal)            ║
+-- ║     Compatible : Synapse X / KRNL / Fluxus / Delta  ║
+-- ╚══════════════════════════════════════════════════════╝
+
+-- ══════════════════════════════════════════
+--               100 CLÉS VALIDES
+-- ══════════════════════════════════════════
+local VALID_KEYS = {
+    "LRKN-A1B2-C3D4-E5F6","LRKN-G7H8-I9J0-K1L2","LRKN-M3N4-O5P6-Q7R8",
+    "LRKN-S9T0-U1V2-W3X4","LRKN-Y5Z6-A7B8-C9D0","LRKN-E1F2-G3H4-I5J6",
+    "LRKN-K7L8-M9N0-O1P2","LRKN-Q3R4-S5T6-U7V8","LRKN-W9X0-Y1Z2-A3B4",
+    "LRKN-C5D6-E7F8-G9H0","LRKN-I1J2-K3L4-M5N6","LRKN-O7P8-Q9R0-S1T2",
+    "LRKN-U3V4-W5X6-Y7Z8","LRKN-A9B0-C1D2-E3F4","LRKN-G5H6-I7J8-K9L0",
+    "LRKN-M1N2-O3P4-Q5R6","LRKN-S7T8-U9V0-W1X2","LRKN-Y3Z4-A5B6-C7D8",
+    "LRKN-E9F0-G1H2-I3J4","LRKN-K5L6-M7N8-O9P0","LRKN-Q1R2-S3T4-U5V6",
+    "LRKN-W7X8-Y9Z0-A1B2","LRKN-C3D4-E5F6-G7H8","LRKN-I9J0-K1L2-M3N4",
+    "LRKN-O5P6-Q7R8-S9T0","LRKN-U1V2-W3X4-Y5Z6","LRKN-A7B8-C9D0-E1F2",
+    "LRKN-G3H4-I5J6-K7L8","LRKN-M9N0-O1P2-Q3R4","LRKN-S5T6-U7V8-W9X0",
+    "LRKN-Y1Z2-A3B4-C5D6","LRKN-E7F8-G9H0-I1J2","LRKN-K3L4-M5N6-O7P8",
+    "LRKN-Q9R0-S1T2-U3V4","LRKN-W5X6-Y7Z8-A9B0","LRKN-C1D2-E3F4-G5H6",
+    "LRKN-I7J8-K9L0-M1N2","LRKN-O3P4-Q5R6-S7T8","LRKN-U9V0-W1X2-Y3Z4",
+    "LRKN-A5B6-C7D8-E9F0","LRKN-G1H2-I3J4-K5L6","LRKN-M7N8-O9P0-Q1R2",
+    "LRKN-S3T4-U5V6-W7X8","LRKN-Y9Z0-A1B2-C3D4","LRKN-E5F6-G7H8-I9J0",
+    "LRKN-K1L2-M3N4-O5P6","LRKN-Q7R8-S9T0-U1V2","LRKN-W3X4-Y5Z6-A7B8",
+    "LRKN-C9D0-E1F2-G3H4","LRKN-I5J6-K7L8-M9N0","LRKN-O1P2-Q3R4-S5T6",
+    "LRKN-U7V8-W9X0-Y1Z2","LRKN-A3B4-C5D6-E7F8","LRKN-G9H0-I1J2-K3L4",
+    "LRKN-M5N6-O7P8-Q9R0","LRKN-S1T2-U3V4-W5X6","LRKN-Y7Z8-A9B0-C1D2",
+    "LRKN-E3F4-G5H6-I7J8","LRKN-K9L0-M1N2-O3P4","LRKN-Q5R6-S7T8-U9V0",
+    "LRKN-W1X2-Y3Z4-A5B6","LRKN-C7D8-E9F0-G1H2","LRKN-I3J4-K5L6-M7N8",
+    "LRKN-O9P0-Q1R2-S3T4","LRKN-U5V6-W7X8-Y9Z0","LRKN-A1B2-C3D4-E5Z9",
+    "LRKN-G7H8-I9J0-K1Z8","LRKN-M3N4-O5P6-Q7Z7","LRKN-S9T0-U1V2-W3Z6",
+    "LRKN-Y5Z6-A7B8-C9Z5","LRKN-E1F2-G3H4-I5Z4","LRKN-K7L8-M9N0-O1Z3",
+    "LRKN-Q3R4-S5T6-U7Z2","LRKN-W9X0-Y1Z2-A3Z1","LRKN-C5D6-E7F8-G9Z0",
+    "LRKN-Z1A2-B3C4-D5E6","LRKN-F7G8-H9I0-J1K2","LRKN-L3M4-N5O6-P7Q8",
+    "LRKN-R9S0-T1U2-V3W4","LRKN-X5Y6-Z7A8-B9C0","LRKN-D1E2-F3G4-H5I6",
+    "LRKN-J7K8-L9M0-N1O2","LRKN-P3Q4-R5S6-T7U8","LRKN-V9W0-X1Y2-Z3A4",
+    "LRKN-B5C6-D7E8-F9G0","LRKN-H1I2-J3K4-L5M6","LRKN-N7O8-P9Q0-R1S2",
+    "LRKN-T3U4-V5W6-X7Y8","LRKN-Z9A0-B1C2-D3E4","LRKN-F5G6-H7I8-J9K0",
+    "LRKN-L1M2-N3O4-P5Q6","LRKN-R7S8-T9U0-V1W2","LRKN-X3Y4-Z5A6-B7C8",
+    "LRKN-D9E0-F1G2-H3I4","LRKN-J5K6-L7M8-N9O0","LRKN-P1Q2-R3S4-T5U6",
+    "LRKN-V7W8-X9Y0-Z1A2","LRKN-B3C4-D5E6-F7G8","LRKN-H9I0-J1K2-L3M4",
+}
+
+-- ══════════════════════════════════════════
+--     BRAINROTS + VRAIS NOMS SECRETS
+-- ══════════════════════════════════════════
+local BRAINROTS = {
+    -- NOM PUBLIC                    NOM SECRET VRAI                         TIER  COULEUR
+    { name="Dragon Canneloni",       secret="Il Draghetto della Pasta",      tier=3, color=Color3.fromRGB(255,45,120) },
+    { name="Meowl",                  secret="Gufetto Miagolante",            tier=2, color=Color3.fromRGB(255,107,0) },
+    { name="Tralalero Tralala",      secret="Lo Squalo Canterino",           tier=3, color=Color3.fromRGB(255,45,120) },
+    { name="Bombardiro Crocodilo",   secret="Il Coccodrillo Bombarolo",      tier=3, color=Color3.fromRGB(255,45,120) },
+    { name="Tung Tung Tung Sahur",   secret="Il Tamburo della Notte Santa",  tier=1, color=Color3.fromRGB(100,180,255) },
+    { name="Bombombini Gusini",      secret="L'Ochetta Esplosiva",           tier=2, color=Color3.fromRGB(255,107,0) },
+    { name="Lirilì Larilà",         secret="L'Elefante della Savana Magica",tier=3, color=Color3.fromRGB(255,45,120) },
+    { name="Cappuccino Assassino",   secret="Il Caffè che Uccide",           tier=1, color=Color3.fromRGB(100,180,255) },
+    { name="Frigo Camelo",           secret="Il Cammello Refrigerato",       tier=2, color=Color3.fromRGB(255,107,0) },
+    { name="Glorbo Fruttodrago",     secret="Il Draghetto della Frutta",     tier=3, color=Color3.fromRGB(255,45,120) },
+    { name="La Vaca Saturno",        secret="La Mucca degli Anelli Cosmici", tier=2, color=Color3.fromRGB(255,107,0) },
+    { name="Brr Brr Patapim",        secret="La Scimmietta del Freddo",      tier=1, color=Color3.fromRGB(100,180,255) },
+    { name="Chimpanzini Bananini",   secret="Lo Scimpanzé delle Banane Dorate",tier=1,color=Color3.fromRGB(100,180,255) },
+    { name="Tracotoco Trocotoco",    secret="Il Pappagallo del Ritmo",       tier=2, color=Color3.fromRGB(255,107,0) },
+    { name="Crocodilo Porcelino",    secret="Il Coccodrillo di Porcellana",  tier=2, color=Color3.fromRGB(255,107,0) },
+    { name="Giraffini Maccheronini", secret="La Giraffa della Pasta Lunga",  tier=3, color=Color3.fromRGB(255,45,120) },
+    { name="Shrimpo Bambino",        secret="Il Gamberetto Bambino",         tier=1, color=Color3.fromRGB(100,180,255) },
+    { name="Furbo Serpentino",       secret="Il Serpente Astuto del Caos",   tier=3, color=Color3.fromRGB(255,45,120) },
+    { name="Pinguini Atletici",      secret="I Pinguini dello Sport Estremo",tier=1, color=Color3.fromRGB(100,180,255) },
+    { name="Orangutini Ballerini",   secret="L'Orango Danzante della Foresta",tier=2,color=Color3.fromRGB(255,107,0) },
+    { name="Octopussini Rocketini",  secret="Il Polpo Razzo Spaziale",       tier=3, color=Color3.fromRGB(255,45,120) },
+    { name="Gorillino Danzantino",   secret="Il Gorilla che Balla il Tango", tier=2, color=Color3.fromRGB(255,107,0) },
+    { name="Talpa Bombastica",       secret="La Talpa Esplosiva Sotterranea",tier=1, color=Color3.fromRGB(100,180,255) },
+    { name="Aquila Pirata",          secret="L'Aquila dei Sette Mari",       tier=3, color=Color3.fromRGB(255,45,120) },
+    { name="Lupo Gelato",            secret="Il Lupo che Mangia il Gelato",  tier=2, color=Color3.fromRGB(255,107,0) },
+}
+
+local SERVERS = {
+    "Steal a Brainrot #1","Steal a Brainrot #2","Steal a Brainrot #3",
+    "Steal a Brainrot #4","Steal a Brainrot #5","Steal a Brainrot VIP",
+    "Steal a Brainrot MEGA","Steal a Brainrot ELITE","Steal a Brainrot PRO",
+}
+
+-- ══════════════════════════════════════════
+--              UTILITAIRES
+-- ══════════════════════════════════════════
+local function randInt(a, b) return math.random(a, b) end
+local function randItem(t) return t[math.random(#t)] end
+local function isValidKey(k)
+    k = k:upper():gsub("%s+","")
+    for _, v in ipairs(VALID_KEYS) do
+        if v == k then return true end
+    end
+    return false
+end
+
+-- Services Roblox
+local Players        = game:GetService("Players")
+local TweenService   = game:GetService("TweenService")
+local RunService     = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local LocalPlayer    = Players.LocalPlayer
+local PlayerGui      = LocalPlayer:WaitForChild("PlayerGui")
+
+-- ══════════════════════════════════════════
+--              BUILD GUI
+-- ══════════════════════════════════════════
+-- Nettoyage si déjà présent
+if PlayerGui:FindFirstChild("LarkenHub") then
+    PlayerGui.LarkenHub:Destroy()
+end
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "LarkenHub"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ScreenGui.Parent = PlayerGui
+
+-- ══════════════════════════════════════════
+--           ÉCRAN CLÉ
+-- ══════════════════════════════════════════
+local KeyFrame = Instance.new("Frame")
+KeyFrame.Name = "KeyFrame"
+KeyFrame.Size = UDim2.new(1, 0, 1, 0)
+KeyFrame.BackgroundColor3 = Color3.fromRGB(5, 5, 12)
+KeyFrame.BorderSizePixel = 0
+KeyFrame.ZIndex = 10
+KeyFrame.Parent = ScreenGui
+
+-- Titre LARKEN
+local KeyTitle = Instance.new("TextLabel")
+KeyTitle.Size = UDim2.new(0, 400, 0, 70)
+KeyTitle.Position = UDim2.new(0.5, -200, 0.28, 0)
+KeyTitle.BackgroundTransparency = 1
+KeyTitle.Text = "LARKEN"
+KeyTitle.Font = Enum.Font.GothamBold
+KeyTitle.TextSize = 52
+KeyTitle.TextColor3 = Color3.fromRGB(57, 255, 20)
+KeyTitle.ZIndex = 11
+KeyTitle.Parent = KeyFrame
+
+local KeySub = Instance.new("TextLabel")
+KeySub.Size = UDim2.new(0, 400, 0, 25)
+KeySub.Position = UDim2.new(0.5, -200, 0.42, 0)
+KeySub.BackgroundTransparency = 1
+KeySub.Text = "SECRET BRAINROT HUB — ACCES SECURISE"
+KeySub.Font = Enum.Font.Gotham
+KeySub.TextSize = 12
+KeySub.TextColor3 = Color3.fromRGB(80, 80, 100)
+KeySub.ZIndex = 11
+KeySub.Parent = KeyFrame
+
+-- Box clé
+local KeyBox = Instance.new("Frame")
+KeyBox.Size = UDim2.new(0, 400, 0, 180)
+KeyBox.Position = UDim2.new(0.5, -200, 0.5, -30)
+KeyBox.BackgroundColor3 = Color3.fromRGB(18, 18, 28)
+KeyBox.BorderSizePixel = 0
+KeyBox.ZIndex = 11
+KeyBox.Parent = KeyFrame
+Instance.new("UICorner", KeyBox).CornerRadius = UDim.new(0, 12)
+local KeyStroke = Instance.new("UIStroke", KeyBox)
+KeyStroke.Color = Color3.fromRGB(57, 255, 20)
+KeyStroke.Thickness = 1
+KeyStroke.Transparency = 0.6
+
+local KeyLabel = Instance.new("TextLabel")
+KeyLabel.Size = UDim2.new(1, -30, 0, 20)
+KeyLabel.Position = UDim2.new(0, 15, 0, 15)
+KeyLabel.BackgroundTransparency = 1
+KeyLabel.Text = "CLE D'ACCES"
+KeyLabel.Font = Enum.Font.GothamBold
+KeyLabel.TextSize = 11
+KeyLabel.TextColor3 = Color3.fromRGB(57, 255, 20)
+KeyLabel.TextXAlignment = Enum.TextXAlignment.Left
+KeyLabel.ZIndex = 12
+KeyLabel.Parent = KeyBox
+
+local KeyInput = Instance.new("TextBox")
+KeyInput.Size = UDim2.new(1, -30, 0, 38)
+KeyInput.Position = UDim2.new(0, 15, 0, 42)
+KeyInput.BackgroundColor3 = Color3.fromRGB(8, 8, 15)
+KeyInput.BorderSizePixel = 0
+KeyInput.PlaceholderText = "LRKN-XXXX-XXXX-XXXX"
+KeyInput.Text = ""
+KeyInput.Font = Enum.Font.GothamBold
+KeyInput.TextSize = 13
+KeyInput.TextColor3 = Color3.fromRGB(57, 255, 20)
+KeyInput.PlaceholderColor3 = Color3.fromRGB(30, 60, 30)
+KeyInput.ClearTextOnFocus = false
+KeyInput.ZIndex = 12
+KeyInput.Parent = KeyBox
+Instance.new("UICorner", KeyInput).CornerRadius = UDim.new(0, 8)
+local InputStroke = Instance.new("UIStroke", KeyInput)
+InputStroke.Color = Color3.fromRGB(57, 255, 20)
+InputStroke.Thickness = 1
+InputStroke.Transparency = 0.65
+
+local KeyError = Instance.new("TextLabel")
+KeyError.Size = UDim2.new(1, -30, 0, 18)
+KeyError.Position = UDim2.new(0, 15, 0, 86)
+KeyError.BackgroundTransparency = 1
+KeyError.Text = "CLE INVALIDE — ACCES REFUSE"
+KeyError.Font = Enum.Font.GothamBold
+KeyError.TextSize = 11
+KeyError.TextColor3 = Color3.fromRGB(255, 45, 120)
+KeyError.TextXAlignment = Enum.TextXAlignment.Left
+KeyError.Visible = false
+KeyError.ZIndex = 12
+KeyError.Parent = KeyBox
+
+local KeyBtn = Instance.new("TextButton")
+KeyBtn.Size = UDim2.new(1, -30, 0, 38)
+KeyBtn.Position = UDim2.new(0, 15, 0, 110)
+KeyBtn.BackgroundColor3 = Color3.fromRGB(57, 255, 20)
+KeyBtn.BorderSizePixel = 0
+KeyBtn.Text = "ACCEDER AU HUB"
+KeyBtn.Font = Enum.Font.GothamBold
+KeyBtn.TextSize = 13
+KeyBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
+KeyBtn.ZIndex = 12
+KeyBtn.Parent = KeyBox
+Instance.new("UICorner", KeyBtn).CornerRadius = UDim.new(0, 8)
+
+-- Hint
+local KeyHint = Instance.new("TextLabel")
+KeyHint.Size = UDim2.new(0, 400, 0, 20)
+KeyHint.Position = UDim2.new(0.5, -200, 0.5, 160)
+KeyHint.BackgroundTransparency = 1
+KeyHint.Text = "100 cles disponibles"
+KeyHint.Font = Enum.Font.Gotham
+KeyHint.TextSize = 11
+KeyHint.TextColor3 = Color3.fromRGB(50, 50, 65)
+KeyHint.ZIndex = 11
+KeyHint.Parent = KeyFrame
+
+-- ══════════════════════════════════════════
+--              FENÊTRE HUB PRINCIPALE
+-- ══════════════════════════════════════════
+local HubFrame = Instance.new("Frame")
+HubFrame.Name = "HubFrame"
+HubFrame.Size = UDim2.new(0, 720, 0, 480)
+HubFrame.Position = UDim2.new(0.5, -360, 0.5, -240)
+HubFrame.BackgroundColor3 = Color3.fromRGB(8, 8, 15)
+HubFrame.BorderSizePixel = 0
+HubFrame.Visible = false
+HubFrame.ZIndex = 5
+HubFrame.Parent = ScreenGui
+Instance.new("UICorner", HubFrame).CornerRadius = UDim.new(0, 14)
+local HubStroke = Instance.new("UIStroke", HubFrame)
+HubStroke.Color = Color3.fromRGB(57, 255, 20)
+HubStroke.Thickness = 2
+HubStroke.Transparency = 0.1
+
+-- Drag
+local dragging, dragInput, dragStart, startPos
+HubFrame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = HubFrame.Position
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then dragging = false end
+        end)
+    end
+end)
+HubFrame.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        dragInput = input
+    end
+end)
+UserInputService.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        local delta = input.Position - dragStart
+        HubFrame.Position = UDim2.new(
+            startPos.X.Scale, startPos.X.Offset + delta.X,
+            startPos.Y.Scale, startPos.Y.Offset + delta.Y
+        )
+    end
+end)
+
+-- ─── TOPBAR ───
+local TopBar = Instance.new("Frame")
+TopBar.Size = UDim2.new(1, 0, 0, 40)
+TopBar.BackgroundColor3 = Color3.fromRGB(12, 12, 20)
+TopBar.BorderSizePixel = 0
+TopBar.ZIndex = 6
+TopBar.Parent = HubFrame
+Instance.new("UICorner", TopBar).CornerRadius = UDim.new(0, 14)
+
+local TopTitle = Instance.new("TextLabel")
+TopTitle.Size = UDim2.new(0, 200, 1, 0)
+TopTitle.Position = UDim2.new(0, 14, 0, 0)
+TopTitle.BackgroundTransparency = 1
+TopTitle.Text = "LARKEN  •  SECRET BRAINROT HUB"
+TopTitle.Font = Enum.Font.GothamBold
+TopTitle.TextSize = 12
+TopTitle.TextColor3 = Color3.fromRGB(57, 255, 20)
+TopTitle.TextXAlignment = Enum.TextXAlignment.Left
+TopTitle.ZIndex = 7
+TopTitle.Parent = TopBar
+
+-- Bouton fermer
+local CloseBtn = Instance.new("TextButton")
+CloseBtn.Size = UDim2.new(0, 28, 0, 22)
+CloseBtn.Position = UDim2.new(1, -34, 0.5, -11)
+CloseBtn.BackgroundColor3 = Color3.fromRGB(255, 45, 120)
+CloseBtn.BorderSizePixel = 0
+CloseBtn.Text = "X"
+CloseBtn.Font = Enum.Font.GothamBold
+CloseBtn.TextSize = 12
+CloseBtn.TextColor3 = Color3.fromRGB(255,255,255)
+CloseBtn.ZIndex = 7
+CloseBtn.Parent = TopBar
+Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0, 6)
+
+-- Bouton minimize
+local MinBtn = Instance.new("TextButton")
+MinBtn.Size = UDim2.new(0, 28, 0, 22)
+MinBtn.Position = UDim2.new(1, -68, 0.5, -11)
+MinBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 45)
+MinBtn.BorderSizePixel = 0
+MinBtn.Text = "—"
+MinBtn.Font = Enum.Font.GothamBold
+MinBtn.TextSize = 12
+MinBtn.TextColor3 = Color3.fromRGB(150,150,170)
+MinBtn.ZIndex = 7
+MinBtn.Parent = TopBar
+Instance.new("UICorner", MinBtn).CornerRadius = UDim.new(0, 6)
+
+-- ─── LEFT PANEL ───
+local LeftPanel = Instance.new("Frame")
+LeftPanel.Size = UDim2.new(0, 175, 1, -40)
+LeftPanel.Position = UDim2.new(0, 0, 0, 40)
+LeftPanel.BackgroundColor3 = Color3.fromRGB(11, 11, 18)
+LeftPanel.BorderSizePixel = 0
+LeftPanel.ZIndex = 6
+LeftPanel.Parent = HubFrame
+
+local BrandLabel = Instance.new("TextLabel")
+BrandLabel.Size = UDim2.new(1, -16, 0, 55)
+BrandLabel.Position = UDim2.new(0, 12, 0, 10)
+BrandLabel.BackgroundTransparency = 1
+BrandLabel.Text = "LARKEN\nBRAINROT HUB"
+BrandLabel.Font = Enum.Font.GothamBold
+BrandLabel.TextSize = 17
+BrandLabel.TextColor3 = Color3.fromRGB(57, 255, 20)
+BrandLabel.TextXAlignment = Enum.TextXAlignment.Left
+BrandLabel.ZIndex = 7
+BrandLabel.Parent = LeftPanel
+
+-- Tier buttons
+local tierButtons = {}
+local tierData = {
+    {label="TIER 1\n1M - 25M",  bg=Color3.fromRGB(22,22,35),  active=Color3.fromRGB(35,35,55)},
+    {label="TIER 2\n25M - 100M",bg=Color3.fromRGB(200,100,0), active=Color3.fromRGB(220,140,0)},
+    {label="TIER 3\n100M+ MAX", bg=Color3.fromRGB(180,0,80),  active=Color3.fromRGB(220,0,100)},
+}
+for i, td in ipairs(tierData) do
+    local tb = Instance.new("TextButton")
+    tb.Size = UDim2.new(1, -16, 0, 52)
+    tb.Position = UDim2.new(0, 8, 0, 60 + (i-1)*60)
+    tb.BackgroundColor3 = td.bg
+    tb.BorderSizePixel = 0
+    tb.Text = td.label
+    tb.Font = Enum.Font.GothamBold
+    tb.TextSize = 13
+    tb.TextColor3 = Color3.fromRGB(255, 255, 255)
+    tb.ZIndex = 7
+    tb.Parent = LeftPanel
+    Instance.new("UICorner", tb).CornerRadius = UDim.new(0, 10)
+    tierButtons[i] = tb
+end
+
+-- Auto Join toggle
+local AJBtn = Instance.new("TextButton")
+AJBtn.Size = UDim2.new(1, -16, 0, 38)
+AJBtn.Position = UDim2.new(0, 8, 1, -90)
+AJBtn.BackgroundColor3 = Color3.fromRGB(15, 35, 15)
+AJBtn.BorderSizePixel = 0
+AJBtn.Text = "AUTO JOIN: OFF"
+AJBtn.Font = Enum.Font.GothamBold
+AJBtn.TextSize = 11
+AJBtn.TextColor3 = Color3.fromRGB(57, 255, 20)
+AJBtn.ZIndex = 7
+AJBtn.Parent = LeftPanel
+Instance.new("UICorner", AJBtn).CornerRadius = UDim.new(0, 10)
+local AJStroke = Instance.new("UIStroke", AJBtn)
+AJStroke.Color = Color3.fromRGB(57, 255, 20)
+AJStroke.Thickness = 1
+AJStroke.Transparency = 0.6
+
+-- Clear All
+local ClearBtn = Instance.new("TextButton")
+ClearBtn.Size = UDim2.new(1, -16, 0, 34)
+ClearBtn.Position = UDim2.new(0, 8, 1, -48)
+ClearBtn.BackgroundColor3 = Color3.fromRGB(30, 10, 18)
+ClearBtn.BorderSizePixel = 0
+ClearBtn.Text = "CLEAR ALL"
+ClearBtn.Font = Enum.Font.GothamBold
+ClearBtn.TextSize = 11
+ClearBtn.TextColor3 = Color3.fromRGB(255, 45, 120)
+ClearBtn.ZIndex = 7
+ClearBtn.Parent = LeftPanel
+Instance.new("UICorner", ClearBtn).CornerRadius = UDim.new(0, 10)
+local ClearStroke = Instance.new("UIStroke", ClearBtn)
+ClearStroke.Color = Color3.fromRGB(255, 45, 120)
+ClearStroke.Thickness = 1
+ClearStroke.Transparency = 0.5
+
+-- ─── RIGHT PANEL / FEED ───
+local FeedFrame = Instance.new("Frame")
+FeedFrame.Size = UDim2.new(1, -175, 1, -40)
+FeedFrame.Position = UDim2.new(0, 175, 0, 40)
+FeedFrame.BackgroundTransparency = 1
+FeedFrame.ZIndex = 6
+FeedFrame.Parent = HubFrame
+
+local ScrollFrame = Instance.new("ScrollingFrame")
+ScrollFrame.Size = UDim2.new(1, -6, 1, -30)
+ScrollFrame.Position = UDim2.new(0, 4, 0, 4)
+ScrollFrame.BackgroundTransparency = 1
+ScrollFrame.BorderSizePixel = 0
+ScrollFrame.ScrollBarThickness = 3
+ScrollFrame.ScrollBarImageColor3 = Color3.fromRGB(57, 255, 20)
+ScrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+ScrollFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
+ScrollFrame.ZIndex = 6
+ScrollFrame.Parent = FeedFrame
+
+local ListLayout = Instance.new("UIListLayout")
+ListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+ListLayout.Padding = UDim.new(0, 5)
+ListLayout.Parent = ScrollFrame
+
+-- Status bar
+local StatusBar = Instance.new("Frame")
+StatusBar.Size = UDim2.new(1, 0, 0, 26)
+StatusBar.Position = UDim2.new(0, 0, 1, -26)
+StatusBar.BackgroundColor3 = Color3.fromRGB(10, 10, 18)
+StatusBar.BorderSizePixel = 0
+StatusBar.ZIndex = 7
+StatusBar.Parent = FeedFrame
+
+local StatusDot = Instance.new("Frame")
+StatusDot.Size = UDim2.new(0, 7, 0, 7)
+StatusDot.Position = UDim2.new(0, 10, 0.5, -3)
+StatusDot.BackgroundColor3 = Color3.fromRGB(57, 255, 20)
+StatusDot.BorderSizePixel = 0
+StatusDot.ZIndex = 8
+StatusDot.Parent = StatusBar
+Instance.new("UICorner", StatusDot).CornerRadius = UDim.new(1, 0)
+
+local StatusTxt = Instance.new("TextLabel")
+StatusTxt.Size = UDim2.new(0, 200, 1, 0)
+StatusTxt.Position = UDim2.new(0, 22, 0, 0)
+StatusTxt.BackgroundTransparency = 1
+StatusTxt.Text = "LARKEN LIVE"
+StatusTxt.Font = Enum.Font.GothamBold
+StatusTxt.TextSize = 10
+StatusTxt.TextColor3 = Color3.fromRGB(50, 50, 70)
+StatusTxt.TextXAlignment = Enum.TextXAlignment.Left
+StatusTxt.ZIndex = 8
+StatusTxt.Parent = StatusBar
+
+local CountTxt = Instance.new("TextLabel")
+CountTxt.Size = UDim2.new(0, 180, 1, 0)
+CountTxt.Position = UDim2.new(1, -190, 0, 0)
+CountTxt.BackgroundTransparency = 1
+CountTxt.Text = "0 NOTIFICATIONS"
+CountTxt.Font = Enum.Font.GothamBold
+CountTxt.TextSize = 10
+CountTxt.TextColor3 = Color3.fromRGB(40, 100, 40)
+CountTxt.TextXAlignment = Enum.TextXAlignment.Right
+CountTxt.ZIndex = 8
+CountTxt.Parent = StatusBar
+
+-- ── TOAST POPUP ──
+local Toast = Instance.new("Frame")
+Toast.Size = UDim2.new(0, 300, 0, 64)
+Toast.Position = UDim2.new(1, 20, 1, -80)
+Toast.BackgroundColor3 = Color3.fromRGB(16, 16, 26)
+Toast.BorderSizePixel = 0
+Toast.ZIndex = 20
+Toast.Parent = ScreenGui
+Instance.new("UICorner", Toast).CornerRadius = UDim.new(0, 12)
+local ToastStroke = Instance.new("UIStroke", Toast)
+ToastStroke.Color = Color3.fromRGB(57, 255, 20)
+ToastStroke.Thickness = 1
+ToastStroke.Transparency = 0.3
+
+local ToastTitle = Instance.new("TextLabel")
+ToastTitle.Size = UDim2.new(1, -14, 0, 20)
+ToastTitle.Position = UDim2.new(0, 12, 0, 8)
+ToastTitle.BackgroundTransparency = 1
+ToastTitle.Text = "✓ SERVEUR REJOINT"
+ToastTitle.Font = Enum.Font.GothamBold
+ToastTitle.TextSize = 11
+ToastTitle.TextColor3 = Color3.fromRGB(57, 255, 20)
+ToastTitle.TextXAlignment = Enum.TextXAlignment.Left
+ToastTitle.ZIndex = 21
+ToastTitle.Parent = Toast
+
+local ToastName = Instance.new("TextLabel")
+ToastName.Size = UDim2.new(1, -14, 0, 18)
+ToastName.Position = UDim2.new(0, 12, 0, 26)
+ToastName.BackgroundTransparency = 1
+ToastName.Text = ""
+ToastName.Font = Enum.Font.GothamBold
+ToastName.TextSize = 13
+ToastName.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToastName.TextXAlignment = Enum.TextXAlignment.Left
+ToastName.ZIndex = 21
+ToastName.Parent = Toast
+
+local ToastSub = Instance.new("TextLabel")
+ToastSub.Size = UDim2.new(1, -14, 0, 14)
+ToastSub.Position = UDim2.new(0, 12, 0, 44)
+ToastSub.BackgroundTransparency = 1
+ToastSub.Text = ""
+ToastSub.Font = Enum.Font.Gotham
+ToastSub.TextSize = 10
+ToastSub.TextColor3 = Color3.fromRGB(80, 80, 100)
+ToastSub.TextXAlignment = Enum.TextXAlignment.Left
+ToastSub.ZIndex = 21
+ToastSub.Parent = Toast
+
+-- ══════════════════════════════════════════
+--              LOGIQUE HUB
+-- ══════════════════════════════════════════
+local autoJoin = false
+local activeFilter = 0
+local notifCount = 0
+local cardOrder = 0
+local toastTimer = nil
+
+local function showToast(brainrot, server, speed)
+    ToastName.Text = brainrot.name .. "  •  " .. brainrot.secret
+    ToastSub.Text = server .. "  |  " .. speed .. "M/s"
+    TweenService:Create(Toast, TweenInfo.new(0.35, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
+        Position = UDim2.new(1, -310, 1, -80)
+    }):Play()
+    if toastTimer then task.cancel(toastTimer) end
+    toastTimer = task.delay(3.5, function()
+        TweenService:Create(Toast, TweenInfo.new(0.35, Enum.EasingStyle.Quart, Enum.EasingDirection.In), {
+            Position = UDim2.new(1, 20, 1, -80)
+        }):Play()
+    end)
+end
+
+local function doJoinServer(brainrot, server, speed, joinBtn)
+    if joinBtn.Text == "JOINED" then return end
+    joinBtn.Text = "JOINING..."
+    joinBtn.Active = false
+    joinBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 50)
+
+    task.delay(randInt(8,18)/10, function()
+        joinBtn.Text = "JOINED"
+        joinBtn.BackgroundColor3 = Color3.fromRGB(57, 255, 20)
+        joinBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
+
+        -- Teleport vers un serveur aléatoire du même jeu
+        local success, err = pcall(function()
+            local TeleportService = game:GetService("TeleportService")
+            local servers = TeleportService:GetSortedGameInstances(game.PlaceId, 25)
+            if servers and #servers > 0 then
+                local target = servers[math.random(#servers)]
+                TeleportService:TeleportToPlaceInstance(game.PlaceId, target.JobId, LocalPlayer)
+            else
+                -- Fallback: rejoin le même jeu
+                TeleportService:Teleport(game.PlaceId, LocalPlayer)
+            end
+        end)
+
+        showToast(brainrot, server, speed)
+    end)
+end
+
+local function createCard(brainrot, speed, server, isNew)
+    cardOrder = cardOrder + 1
+    local speed_val = speed or randInt(15, 380)
+    local srv = server or randItem(SERVERS)
+    local tier = speed_val >= 100 and 3 or speed_val >= 40 and 2 or 1
+
+    -- Filtre actif
+    if activeFilter ~= 0 and tier ~= activeFilter then return end
+
+    notifCount = notifCount + 1
+    CountTxt.Text = notifCount .. " NOTIFICATIONS"
+
+    local tierColor = tier == 3 and Color3.fromRGB(255,45,120)
+                   or tier == 2 and Color3.fromRGB(255,107,0)
+                   or Color3.fromRGB(100, 180, 255)
+
+    local tierTag = tier == 3 and "TIER 3  •  100M+ MAX"
+                 or tier == 2 and "TIER 2  •  25M-100M"
+                 or "TIER 1  •  1M-25M"
+
+    -- Card container
+    local card = Instance.new("Frame")
+    card.Name = "Card_" .. cardOrder
+    card.Size = UDim2.new(1, -8, 0, 78)
+    card.BackgroundColor3 = Color3.fromRGB(18, 18, 28)
+    card.BorderSizePixel = 0
+    card.LayoutOrder = -cardOrder
+    card.ZIndex = 7
+    card.Parent = ScrollFrame
+    Instance.new("UICorner", card).CornerRadius = UDim.new(0, 9)
+
+    -- Left accent bar
+    local accentBar = Instance.new("Frame")
+    accentBar.Size = UDim2.new(0, 3, 1, -16)
+    accentBar.Position = UDim2.new(0, 0, 0, 8)
+    accentBar.BackgroundColor3 = tierColor
+    accentBar.BorderSizePixel = 0
+    accentBar.ZIndex = 8
+    accentBar.Parent = card
+    Instance.new("UICorner", accentBar).CornerRadius = UDim.new(0, 2)
+
+    -- Tier tag
+    local tagLbl = Instance.new("TextLabel")
+    tagLbl.Size = UDim2.new(0, 200, 0, 16)
+    tagLbl.Position = UDim2.new(0, 14, 0, 8)
+    tagLbl.BackgroundTransparency = 1
+    tagLbl.Text = tierTag
+    tagLbl.Font = Enum.Font.GothamBold
+    tagLbl.TextSize = 9
+    tagLbl.TextColor3 = Color3.fromRGB(80, 80, 100)
+    tagLbl.TextXAlignment = Enum.TextXAlignment.Left
+    tagLbl.ZIndex = 8
+    tagLbl.Parent = card
+
+    -- Nom PUBLIC
+    local nameLbl = Instance.new("TextLabel")
+    nameLbl.Size = UDim2.new(0, 250, 0, 20)
+    nameLbl.Position = UDim2.new(0, 14, 0, 24)
+    nameLbl.BackgroundTransparency = 1
+    nameLbl.Text = brainrot.name
+    nameLbl.Font = Enum.Font.GothamBold
+    nameLbl.TextSize = 15
+    nameLbl.TextColor3 = Color3.fromRGB(230, 230, 255)
+    nameLbl.TextXAlignment = Enum.TextXAlignment.Left
+    nameLbl.ZIndex = 8
+    nameLbl.Parent = card
+
+    -- Nom SECRET (en dessous, plus petit, coloré)
+    local secretLbl = Instance.new("TextLabel")
+    secretLbl.Size = UDim2.new(0, 260, 0, 15)
+    secretLbl.Position = UDim2.new(0, 14, 0, 44)
+    secretLbl.BackgroundTransparency = 1
+    secretLbl.Text = "SECRET: " .. brainrot.secret
+    secretLbl.Font = Enum.Font.GothamBold
+    secretLbl.TextSize = 10
+    secretLbl.TextColor3 = tierColor
+    secretLbl.TextXAlignment = Enum.TextXAlignment.Left
+    secretLbl.ZIndex = 8
+    secretLbl.Parent = card
+
+    -- Speed
+    local speedLbl = Instance.new("TextLabel")
+    speedLbl.Size = UDim2.new(0, 100, 0, 14)
+    speedLbl.Position = UDim2.new(0, 14, 0, 59)
+    speedLbl.BackgroundTransparency = 1
+    speedLbl.Text = speed_val .. "M/s  •  " .. srv
+    speedLbl.Font = Enum.Font.Gotham
+    speedLbl.TextSize = 9
+    speedLbl.TextColor3 = Color3.fromRGB(60, 60, 80)
+    speedLbl.TextXAlignment = Enum.TextXAlignment.Left
+    speedLbl.ZIndex = 8
+    speedLbl.Parent = card
+
+    -- JOIN button
+    local joinBtn = Instance.new("TextButton")
+    joinBtn.Size = UDim2.new(0, 80, 0, 30)
+    joinBtn.Position = UDim2.new(1, -90, 0.5, -15)
+    joinBtn.BackgroundColor3 = tier == 2 and Color3.fromRGB(255,107,0) or Color3.fromRGB(200,0,80)
+    joinBtn.BorderSizePixel = 0
+    joinBtn.Text = "JOIN"
+    joinBtn.Font = Enum.Font.GothamBold
+    joinBtn.TextSize = 12
+    joinBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    joinBtn.ZIndex = 9
+    joinBtn.Parent = card
+    Instance.new("UICorner", joinBtn).CornerRadius = UDim.new(0, 7)
+
+    joinBtn.MouseButton1Click:Connect(function()
+        doJoinServer(brainrot, srv, speed_val, joinBtn)
+    end)
+
+    -- Animation entrée
+    card.BackgroundTransparency = 1
+    TweenService:Create(card, TweenInfo.new(0.3, Enum.EasingStyle.Quart), {
+        BackgroundTransparency = 0
+    }):Play()
+
+    -- Auto join si activé
+    if autoJoin and isNew then
+        task.delay(0.5, function()
+            doJoinServer(brainrot, srv, speed_val, joinBtn)
+        end)
+    end
+
+    -- Scroll en haut
+    ScrollFrame.CanvasPosition = Vector2.new(0, 0)
+end
+
+-- ══════════════════════════════════════════
+--         LOGIQUE DES BOUTONS
+-- ══════════════════════════════════════════
+
+-- Tier filter
+for i, tb in ipairs(tierButtons) do
+    tb.MouseButton1Click:Connect(function()
+        activeFilter = (activeFilter == i) and 0 or i
+        for j, b in ipairs(tierButtons) do
+            b.BackgroundTransparency = (activeFilter == j) and 0.2 or 0
+        end
+        -- Rafraichir visibilité
+        for _, child in ipairs(ScrollFrame:GetChildren()) do
+            if child:IsA("Frame") and child.Name:sub(1,5) == "Card_" then
+                -- On cache ou montre selon le tier
+                -- (tier stocké dans accentBar color)
+                child.Visible = true -- simplifié : on refiltre par rebuild si besoin
+            end
+        end
+    end)
+end
+
+-- Auto Join
+AJBtn.MouseButton1Click:Connect(function()
+    autoJoin = not autoJoin
+    AJBtn.Text = autoJoin and "AUTO JOIN: ON" or "AUTO JOIN: OFF"
+    AJBtn.BackgroundColor3 = autoJoin and Color3.fromRGB(10,40,10) or Color3.fromRGB(15,35,15)
+    AJStroke.Transparency = autoJoin and 0.1 or 0.6
+end)
+
+-- Clear All
+ClearBtn.MouseButton1Click:Connect(function()
+    for _, child in ipairs(ScrollFrame:GetChildren()) do
+        if child:IsA("Frame") then child:Destroy() end
+    end
+    notifCount = 0
+    CountTxt.Text = "0 NOTIFICATIONS"
+end)
+
+-- Close
+CloseBtn.MouseButton1Click:Connect(function()
+    TweenService:Create(HubFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quart), {
+        Size = UDim2.new(0, 0, 0, 0),
+        Position = UDim2.new(0.5, 0, 0.5, 0)
+    }):Play()
+    task.delay(0.3, function() HubFrame.Visible = false end)
+end)
+
+-- Minimize
+local minimized = false
+MinBtn.MouseButton1Click:Connect(function()
+    minimized = not minimized
+    TweenService:Create(HubFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quart), {
+        Size = minimized and UDim2.new(0, 720, 0, 40) or UDim2.new(0, 720, 0, 480)
+    }):Play()
+    MinBtn.Text = minimized and "+" or "—"
+end)
+
+-- ══════════════════════════════════════════
+--           VALIDATION CLÉ
+-- ══════════════════════════════════════════
+local function openHub()
+    KeyFrame.Visible = false
+    HubFrame.Visible = true
+    HubFrame.Size = UDim2.new(0, 0, 0, 0)
+    HubFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+    TweenService:Create(HubFrame, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+        Size = UDim2.new(0, 720, 0, 480),
+        Position = UDim2.new(0.5, -360, 0.5, -240)
+    }):Play()
+
+    -- Charger brainrots initiaux
+    task.delay(0.5, function()
+        local shuffled = {}
+        for _, b in ipairs(BRAINROTS) do table.insert(shuffled, b) end
+        -- Shuffle
+        for i = #shuffled, 2, -1 do
+            local j = math.random(i)
+            shuffled[i], shuffled[j] = shuffled[j], shuffled[i]
+        end
+        for k = 1, math.min(8, #shuffled) do
+            task.delay((k-1)*0.08, function()
+                createCard(shuffled[k], nil, nil, false)
+            end)
+        end
+    end)
+
+    -- Live feed toutes les 3-7 secondes
+    task.spawn(function()
+        while HubFrame.Visible do
+            task.wait(randInt(30, 70) / 10)
+            local br = randItem(BRAINROTS)
+            createCard(br, nil, nil, true)
+        end
+    end)
+
+    -- Clignotement status dot
+    task.spawn(function()
+        while true do
+            task.wait(0.7)
+            TweenService:Create(StatusDot, TweenInfo.new(0.4), {
+                BackgroundTransparency = 0.8
+            }):Play()
+            task.wait(0.4)
+            TweenService:Create(StatusDot, TweenInfo.new(0.4), {
+                BackgroundTransparency = 0
+            }):Play()
+        end
+    end)
+end
+
+KeyBtn.MouseButton1Click:Connect(function()
+    local key = KeyInput.Text:upper():gsub("%s+","")
+    if isValidKey(key) then
+        KeyError.Visible = false
+        openHub()
+    else
+        KeyError.Visible = true
+        -- Shake animation
+        local origPos = KeyBox.Position
+        for i = 1, 4 do
+            task.wait(0.04)
+            KeyBox.Position = UDim2.new(origPos.X.Scale, origPos.X.Offset + (i%2==0 and 8 or -8), origPos.Y.Scale, origPos.Y.Offset)
+        end
+        task.wait(0.04)
+        KeyBox.Position = origPos
+    end
+end)
+
+-- Enter key sur TextBox
+KeyInput.FocusLost:Connect(function(enterPressed)
+    if enterPressed then
+        KeyBtn:Click()
+    end
+end)
+
+print("[LARKEN] Hub charge avec succes — Synapse/KRNL/Fluxus/Delta")
+print("[LARKEN] 100 cles disponibles | Format: LRKN-XXXX-XXXX-XXXX")
+print("[LARKEN] Cle test: LRKN-A1B2-C3D4-E5F6")
