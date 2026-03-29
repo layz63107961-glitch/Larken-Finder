@@ -306,51 +306,225 @@ local function mkLabel(parent,text,size,color,font,ax,pos,sz,zi)
 end
 
 -- ══════════════════════════════════════════
---           ÉCRAN CLÉ
+--           ÉCRAN CLÉ — STYLE L.A.K OG
 -- ══════════════════════════════════════════
 local KeyFrame=Instance.new("Frame",ScreenGui)
-KeyFrame.Size=UDim2.new(1,0,1,0); KeyFrame.BackgroundColor3=Color3.fromRGB(5,5,12)
+KeyFrame.Size=UDim2.new(1,0,1,0)
+KeyFrame.BackgroundColor3=Color3.fromRGB(4,4,10)
 KeyFrame.BorderSizePixel=0; KeyFrame.ZIndex=10
 
-mkLabel(KeyFrame,"LARKEN",52,Color3.fromRGB(57,255,20),Enum.Font.GothamBold,
-    Enum.TextXAlignment.Center,UDim2.new(0.5,-200,0.24,0),UDim2.new(0,400,0,70),11)
-mkLabel(KeyFrame,"SECRET BRAINROT HUB  |  ACCES SECURISE",11,
-    Color3.fromRGB(65,65,88),Enum.Font.Gotham,Enum.TextXAlignment.Center,
-    UDim2.new(0.5,-220,0.4,0),UDim2.new(0,440,0,22),11)
+-- Fond avec grille style OG
+local KeyBg=Instance.new("Frame",KeyFrame)
+KeyBg.Size=UDim2.new(1,0,1,0); KeyBg.BackgroundColor3=Color3.fromRGB(4,4,10)
+KeyBg.BorderSizePixel=0; KeyBg.ZIndex=10
 
-local KeyBox=Instance.new("Frame",KeyFrame)
-KeyBox.Size=UDim2.new(0,430,0,225); KeyBox.Position=UDim2.new(0.5,-215,0.46,-112)
-KeyBox.BackgroundColor3=Color3.fromRGB(15,15,25); KeyBox.BorderSizePixel=0; KeyBox.ZIndex=11
-mkCorner(KeyBox,14); mkStroke(KeyBox,Color3.fromRGB(57,255,20),1,0.55)
+-- Particules de fond (points lumineux)
+for i=1,18 do
+    local dot=Instance.new("Frame",KeyFrame)
+    dot.Size=UDim2.new(0,randInt(2,5),0,randInt(2,5))
+    dot.Position=UDim2.new(math.random(),randInt(-10,10),math.random(),randInt(-10,10))
+    dot.BackgroundColor3=Color3.fromRGB(randInt(50,255),randInt(50,255),randInt(50,255))
+    dot.BorderSizePixel=0; dot.ZIndex=10
+    mkCorner(dot,3)
+end
 
-mkLabel(KeyBox,"CLE D'ACCES",10,Color3.fromRGB(57,255,20),Enum.Font.GothamBold,
-    Enum.TextXAlignment.Left,UDim2.new(0,16,0,14),UDim2.new(1,-32,0,16),12)
+-- Conteneur centré pour tout l'écran clé
+local KeyCenter=Instance.new("Frame",KeyFrame)
+KeyCenter.Size=UDim2.new(0,480,0,520)
+KeyCenter.Position=UDim2.new(0.5,-240,0.5,-260)
+KeyCenter.BackgroundTransparency=1; KeyCenter.ZIndex=11
 
+-- ─── LOGO L.A.K style OG (font GothamBlack = plus proche de Steal a Brainrot) ───
+-- Ombre du logo
+local LogoShadow=Instance.new("TextLabel",KeyCenter)
+LogoShadow.Size=UDim2.new(1,0,0,110)
+LogoShadow.Position=UDim2.new(0,4,0,4)
+LogoShadow.BackgroundTransparency=1
+LogoShadow.Text="L.A.K"
+LogoShadow.Font=Enum.Font.GothamBlack
+LogoShadow.TextSize=88
+LogoShadow.TextColor3=Color3.fromRGB(0,0,0)
+LogoShadow.TextXAlignment=Enum.TextXAlignment.Center
+LogoShadow.ZIndex=11
+
+-- Logo principal (sera coloré en rainbow par le loop)
+local LogoMain=Instance.new("TextLabel",KeyCenter)
+LogoMain.Size=UDim2.new(1,0,0,110)
+LogoMain.Position=UDim2.new(0,0,0,0)
+LogoMain.BackgroundTransparency=1
+LogoMain.Text="L.A.K"
+LogoMain.Font=Enum.Font.GothamBlack
+LogoMain.TextSize=88
+LogoMain.TextColor3=Color3.fromRGB(57,255,20)
+LogoMain.TextXAlignment=Enum.TextXAlignment.Center
+LogoMain.ZIndex=12
+
+-- Sous-titre style OG
+local SubTitle=Instance.new("TextLabel",KeyCenter)
+SubTitle.Size=UDim2.new(1,0,0,22)
+SubTitle.Position=UDim2.new(0,0,0,108)
+SubTitle.BackgroundTransparency=1
+SubTitle.Text="~ SECRET BRAINROT HUB ~"
+SubTitle.Font=Enum.Font.GothamBlack
+SubTitle.TextSize=14
+SubTitle.TextColor3=Color3.fromRGB(200,200,255)
+SubTitle.TextXAlignment=Enum.TextXAlignment.Center
+SubTitle.ZIndex=12
+
+-- Ligne déco
+local DecoLine=Instance.new("Frame",KeyCenter)
+DecoLine.Size=UDim2.new(0,320,0,2)
+DecoLine.Position=UDim2.new(0.5,-160,0,138)
+DecoLine.BackgroundColor3=Color3.fromRGB(57,255,20)
+DecoLine.BorderSizePixel=0; DecoLine.ZIndex=12
+
+-- ─── BOX CLÉ avec contour RAINBOW ───
+-- Wrapper rainbow (légèrement plus grand que le box)
+local RainbowWrap=Instance.new("Frame",KeyCenter)
+RainbowWrap.Size=UDim2.new(1,6,0,238)
+RainbowWrap.Position=UDim2.new(0,-3,0,152)
+RainbowWrap.BackgroundColor3=Color3.fromRGB(57,255,20) -- sera animé
+RainbowWrap.BorderSizePixel=0; RainbowWrap.ZIndex=11
+mkCorner(RainbowWrap,16)
+
+local KeyBox=Instance.new("Frame",RainbowWrap)
+KeyBox.Size=UDim2.new(1,-6,1,-6)
+KeyBox.Position=UDim2.new(0,3,0,3)
+KeyBox.BackgroundColor3=Color3.fromRGB(10,10,20)
+KeyBox.BorderSizePixel=0; KeyBox.ZIndex=12
+mkCorner(KeyBox,13)
+
+-- Icône clé + label
+local KeyIconLbl=Instance.new("TextLabel",KeyBox)
+KeyIconLbl.Size=UDim2.new(1,-28,0,22)
+KeyIconLbl.Position=UDim2.new(0,14,0,14)
+KeyIconLbl.BackgroundTransparency=1
+KeyIconLbl.Text="🔑  CLE D'ACCES"
+KeyIconLbl.Font=Enum.Font.GothamBlack
+KeyIconLbl.TextSize=12
+KeyIconLbl.TextColor3=Color3.fromRGB(200,200,255)
+KeyIconLbl.TextXAlignment=Enum.TextXAlignment.Left
+KeyIconLbl.ZIndex=13
+
+-- Input field
 local KeyInput=Instance.new("TextBox",KeyBox)
-KeyInput.Size=UDim2.new(1,-32,0,38); KeyInput.Position=UDim2.new(0,16,0,36)
-KeyInput.BackgroundColor3=Color3.fromRGB(8,8,16); KeyInput.BorderSizePixel=0
+KeyInput.Size=UDim2.new(1,-28,0,42)
+KeyInput.Position=UDim2.new(0,14,0,42)
+KeyInput.BackgroundColor3=Color3.fromRGB(5,5,14)
+KeyInput.BorderSizePixel=0
 KeyInput.PlaceholderText="LRKN-XXXX  /  SUPR-XXXX  /  DEV-LARKEN-2025"
-KeyInput.Text=""; KeyInput.Font=Enum.Font.GothamBold; KeyInput.TextSize=11
-KeyInput.TextColor3=Color3.fromRGB(57,255,20); KeyInput.PlaceholderColor3=Color3.fromRGB(22,48,22)
-KeyInput.ClearTextOnFocus=false; KeyInput.ZIndex=12
-mkCorner(KeyInput,8); mkStroke(KeyInput,Color3.fromRGB(57,255,20),1,0.65)
+KeyInput.Text=""
+KeyInput.Font=Enum.Font.GothamBold
+KeyInput.TextSize=12
+KeyInput.TextColor3=Color3.fromRGB(57,255,20)
+KeyInput.PlaceholderColor3=Color3.fromRGB(30,55,30)
+KeyInput.ClearTextOnFocus=false; KeyInput.ZIndex=13
+mkCorner(KeyInput,9)
+-- Stroke rainbow sur input (sera animé)
+local InputStroke=mkStroke(KeyInput,Color3.fromRGB(57,255,20),1.5,0.2)
 
+-- Erreur
 local KeyError=Instance.new("TextLabel",KeyBox)
-KeyError.Size=UDim2.new(1,-32,0,16); KeyError.Position=UDim2.new(0,16,0,82)
+KeyError.Size=UDim2.new(1,-28,0,16); KeyError.Position=UDim2.new(0,14,0,92)
 KeyError.BackgroundTransparency=1; KeyError.Text=""; KeyError.Font=Enum.Font.GothamBold
-KeyError.TextSize=11; KeyError.TextColor3=Color3.fromRGB(255,45,120)
-KeyError.TextXAlignment=Enum.TextXAlignment.Left; KeyError.ZIndex=12
+KeyError.TextSize=11; KeyError.TextColor3=Color3.fromRGB(255,60,120)
+KeyError.TextXAlignment=Enum.TextXAlignment.Left; KeyError.ZIndex=13
 
+-- Bouton ACCEDER
 local KeyBtn=Instance.new("TextButton",KeyBox)
-KeyBtn.Size=UDim2.new(1,-32,0,40); KeyBtn.Position=UDim2.new(0,16,0,106)
-KeyBtn.BackgroundColor3=Color3.fromRGB(57,255,20); KeyBtn.BorderSizePixel=0
-KeyBtn.Text="ACCEDER AU HUB"; KeyBtn.Font=Enum.Font.GothamBold; KeyBtn.TextSize=13
-KeyBtn.TextColor3=Color3.fromRGB(0,0,0); KeyBtn.ZIndex=12
-mkCorner(KeyBtn,8)
+KeyBtn.Size=UDim2.new(1,-28,0,44)
+KeyBtn.Position=UDim2.new(0,14,0,116)
+KeyBtn.BackgroundColor3=Color3.fromRGB(57,255,20)
+KeyBtn.BorderSizePixel=0
+KeyBtn.Text="▶  ACCEDER AU HUB"
+KeyBtn.Font=Enum.Font.GothamBlack
+KeyBtn.TextSize=14
+KeyBtn.TextColor3=Color3.fromRGB(0,0,0)
+KeyBtn.ZIndex=13
+mkCorner(KeyBtn,10)
 
-mkLabel(KeyBox,"100 cles normales  •  100 cles SUPREME  •  Acces developpeur",10,
-    Color3.fromRGB(42,42,62),Enum.Font.Gotham,Enum.TextXAlignment.Center,
-    UDim2.new(0,0,0,162),UDim2.new(1,0,0,16),12)
+-- Info bas
+local KeyInfo=Instance.new("TextLabel",KeyBox)
+KeyInfo.Size=UDim2.new(1,-28,0,18); KeyInfo.Position=UDim2.new(0,0,0,170)
+KeyInfo.BackgroundTransparency=1
+KeyInfo.Text="100 cles normales  •  100 SUPREME  •  Acces DEV"
+KeyInfo.Font=Enum.Font.Gotham; KeyInfo.TextSize=10
+KeyInfo.TextColor3=Color3.fromRGB(38,38,58)
+KeyInfo.TextXAlignment=Enum.TextXAlignment.Center; KeyInfo.ZIndex=13
+
+-- Badges sous la box
+local badge1=Instance.new("TextLabel",KeyCenter)
+badge1.Size=UDim2.new(0,130,0,26); badge1.Position=UDim2.new(0,0,0,400)
+badge1.BackgroundColor3=Color3.fromRGB(15,35,15); badge1.BorderSizePixel=0
+badge1.Text="✦ NORMAL"; badge1.Font=Enum.Font.GothamBlack; badge1.TextSize=11
+badge1.TextColor3=Color3.fromRGB(57,255,20); badge1.ZIndex=12
+mkCorner(badge1,8); mkStroke(badge1,Color3.fromRGB(57,255,20),1,0.4)
+
+local badge2=Instance.new("TextLabel",KeyCenter)
+badge2.Size=UDim2.new(0,130,0,26); badge2.Position=UDim2.new(0.5,-65,0,400)
+badge2.BackgroundColor3=Color3.fromRGB(35,28,0); badge2.BorderSizePixel=0
+badge2.Text="★ SUPREME"; badge2.Font=Enum.Font.GothamBlack; badge2.TextSize=11
+badge2.TextColor3=Color3.fromRGB(255,215,0); badge2.ZIndex=12
+mkCorner(badge2,8); mkStroke(badge2,Color3.fromRGB(255,215,0),1,0.4)
+
+local badge3=Instance.new("TextLabel",KeyCenter)
+badge3.Size=UDim2.new(0,130,0,26); badge3.Position=UDim2.new(1,-130,0,400)
+badge3.BackgroundColor3=Color3.fromRGB(8,8,30); badge3.BorderSizePixel=0
+badge3.Text="⬡ DEV"; badge3.Font=Enum.Font.GothamBlack; badge3.TextSize=11
+badge3.TextColor3=Color3.fromRGB(120,180,255); badge3.ZIndex=12
+mkCorner(badge3,8); mkStroke(badge3,Color3.fromRGB(120,180,255),1,0.4)
+
+-- Version
+local VerLbl=Instance.new("TextLabel",KeyCenter)
+VerLbl.Size=UDim2.new(1,0,0,16); VerLbl.Position=UDim2.new(0,0,0,438)
+VerLbl.BackgroundTransparency=1; VerLbl.Text="v4.0  —  by L.A.K Team"
+VerLbl.Font=Enum.Font.Gotham; VerLbl.TextSize=10
+VerLbl.TextColor3=Color3.fromRGB(30,30,50)
+VerLbl.TextXAlignment=Enum.TextXAlignment.Center; VerLbl.ZIndex=12
+
+-- ─── ANIMATION RAINBOW CONTOUR ───
+local rainbowColors = {
+    Color3.fromRGB(255,0,0),
+    Color3.fromRGB(255,127,0),
+    Color3.fromRGB(255,255,0),
+    Color3.fromRGB(0,255,0),
+    Color3.fromRGB(0,200,255),
+    Color3.fromRGB(100,0,255),
+    Color3.fromRGB(255,0,200),
+}
+local rbIdx=1; local rbT=0
+
+task.spawn(function()
+    while KeyFrame.Visible do
+        task.wait(0.05)
+        rbT=rbT+0.05
+        -- Interpolation fluide entre les couleurs
+        local i1=math.floor(rbT * 2) % #rainbowColors + 1
+        local i2=(i1 % #rainbowColors) + 1
+        local alpha=(rbT*2) % 1
+        local r=rainbowColors[i1].R+(rainbowColors[i2].R-rainbowColors[i1].R)*alpha
+        local g=rainbowColors[i1].G+(rainbowColors[i2].G-rainbowColors[i1].G)*alpha
+        local b=rainbowColors[i1].B+(rainbowColors[i2].B-rainbowColors[i1].B)*alpha
+        local col=Color3.new(r,g,b)
+
+        RainbowWrap.BackgroundColor3=col
+        InputStroke.Color=col
+        LogoMain.TextColor3=col
+        DecoLine.BackgroundColor3=col
+    end
+end)
+
+-- Animation logo pulse
+task.spawn(function()
+    while KeyFrame.Visible do
+        TweenService:Create(LogoMain,TweenInfo.new(0.9,Enum.EasingStyle.Sine,Enum.EasingDirection.InOut),
+            {TextTransparency=0.15}):Play()
+        task.wait(0.9)
+        TweenService:Create(LogoMain,TweenInfo.new(0.9,Enum.EasingStyle.Sine,Enum.EasingDirection.InOut),
+            {TextTransparency=0}):Play()
+        task.wait(0.9)
+    end
+end)
 
 -- ══════════════════════════════════════════
 --           HUB PRINCIPAL
@@ -388,8 +562,8 @@ TopBar.Size=UDim2.new(1,0,0,42); TopBar.BackgroundColor3=Color3.fromRGB(11,11,20
 TopBar.BorderSizePixel=0; TopBar.ZIndex=6
 mkCorner(TopBar,14)
 
-mkLabel(TopBar,"LARKEN  •  SECRET BRAINROT HUB",12,Color3.fromRGB(57,255,20),
-    Enum.Font.GothamBold,Enum.TextXAlignment.Left,
+mkLabel(TopBar,"L.A.K  •  SECRET BRAINROT HUB",12,Color3.fromRGB(57,255,20),
+    Enum.Font.GothamBlack,Enum.TextXAlignment.Left,
     UDim2.new(0,14,0,0),UDim2.new(0,280,1,0),7)
 
 local AccessBadge=Instance.new("TextLabel",TopBar)
@@ -430,8 +604,8 @@ local Left=Instance.new("Frame",HubContent)
 Left.Size=UDim2.new(0,182,1,0); Left.BackgroundColor3=Color3.fromRGB(11,11,18)
 Left.BorderSizePixel=0; Left.ZIndex=6
 
-mkLabel(Left,"LARKEN\nBRAINROT HUB",16,Color3.fromRGB(57,255,20),
-    Enum.Font.GothamBold,Enum.TextXAlignment.Left,
+mkLabel(Left,"L.A.K\nBRAINROT HUB",16,Color3.fromRGB(57,255,20),
+    Enum.Font.GothamBlack,Enum.TextXAlignment.Left,
     UDim2.new(0,12,0,8),UDim2.new(1,-16,0,52),7)
 
 local tierDefs={
@@ -972,9 +1146,9 @@ KeyInput.FocusLost:Connect(function(enter)
     if enter then KeyBtn:Click() end
 end)
 
-print("[LARKEN v4.0] Charge avec succes !")
-print("[LARKEN] No Join apres "..MAX_JOINS.." joins par brainrot")
-print("[LARKEN] Filtre serveurs 90%+ full | Tapis auto-equip | Base aleatoire")
-print("[LARKEN] Normal: 100 cles  |  Supreme: 100 cles  |  Dev: DEV-LARKEN-2025")
-print("[LARKEN] Devs: compte634tyconts, Aiko59_brt, KAYZZOXX1")
-print("[LARKEN] PlaceId: "..PLACE_ID)
+print("[L.A.K v4.0] Charge avec succes !")
+print("[L.A.K] No Join apres "..MAX_JOINS.." joins par brainrot")
+print("[L.A.K] Filtre serveurs 90%+ full | Tapis auto-equip | Base aleatoire")
+print("[L.A.K] Normal: 100 cles  |  Supreme: 100 cles  |  Dev: DEV-LARKEN-2025")
+print("[L.A.K] Devs: compte634tyconts, Aiko59_brt, KAYZZOXX1")
+print("[L.A.K] PlaceId: "..PLACE_ID)
