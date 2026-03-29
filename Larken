@@ -19,7 +19,7 @@ math.randomseed(os.time())
 --           CONFIG DÉVELOPPEUR
 -- ══════════════════════════════════════════
 local DEV_PASSWORD  = "DEV-LARKEN-2025"
-local DEV_USERNAMES = { "compte634tyconts", "Aiko59_brt", "KAYZZOXX1" }
+local DEV_USERNAMES = { "compte634tyconts", "Aiko59_brt", "Talmo456" }
 local PLACE_ID      = 109983668079237
 
 -- ══════════════════════════════════════════
