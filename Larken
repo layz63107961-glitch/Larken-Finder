@@ -2,7 +2,7 @@
 -- ║           LARKEN — SECRET BRAINROT HUB               ║
 -- ║        Script Roblox Executor (Universal)            ║
 -- ║     Compatible : Synapse X / KRNL / Fluxus / Delta  ║
--- ║  v3.0 — Supreme Keys • Dev Access • Blacklist • Fix ║
+-- ║  v4.0 — No Join • Full Servers 90% • Tapis Equip    ║
 -- ╚══════════════════════════════════════════════════════╝
 
 local Players          = game:GetService("Players")
@@ -177,8 +177,68 @@ local SERVERS = {
 }
 
 -- ══════════════════════════════════════════
---              BLACKLIST
+--    COMPTEUR NO JOIN (max 3 par brainrot)
 -- ══════════════════════════════════════════
+local MAX_JOINS     = 3
+local joinCounters  = {} -- { [brainrotName] = count }
+
+local function getJoinCount(name)
+    return joinCounters[name] or 0
+end
+
+local function incrementJoin(name)
+    joinCounters[name] = (joinCounters[name] or 0) + 1
+end
+
+local function isNoJoin(name)
+    return getJoinCount(name) >= MAX_JOINS
+end
+
+-- ══════════════════════════════════════════
+--    ÉQUIPEMENT DU TAPIS (1er tool backpack)
+-- ══════════════════════════════════════════
+local function equipFirstTool()
+    task.delay(2.5, function() -- délai pour que le spawn soit terminé
+        pcall(function()
+            local backpack = LocalPlayer:FindFirstChild("Backpack")
+            if backpack then
+                local firstTool = backpack:FindFirstChildOfClass("Tool")
+                if firstTool then
+                    -- Équipe le tool via HumanoidDescription ou direct
+                    local char = LocalPlayer.Character
+                    if char then
+                        firstTool.Parent = char
+                    end
+                end
+            end
+        end)
+    end)
+end
+
+-- ══════════════════════════════════════════
+--    SPAWN À BASE ALÉATOIRE
+-- ══════════════════════════════════════════
+local function teleportToRandomBase()
+    pcall(function()
+        local char = LocalPlayer.Character
+        if not char then return end
+        local hrp = char:FindFirstChild("HumanoidRootPart")
+        if not hrp then return end
+
+        -- Cherche toutes les bases/spawns dans le jeu
+        local spawnLocations = {}
+        for _, obj in ipairs(workspace:GetDescendants()) do
+            if obj:IsA("SpawnLocation") or obj:IsA("BasePart") and obj.Name:lower():find("base") then
+                table.insert(spawnLocations, obj)
+            end
+        end
+
+        if #spawnLocations > 0 then
+            local target = spawnLocations[math.random(#spawnLocations)]
+            hrp.CFrame = target.CFrame + Vector3.new(0, 5, 0)
+        end
+    end)
+end
 local blacklist = {}
 local function isBlacklisted(name) return blacklist[name:lower()] == true end
 local function toggleBlacklist(name)
@@ -541,35 +601,99 @@ local function showToast(brainrot,server,speed)
     end)
 end
 
-local function doJoin(brainrot,server,speed,joinBtn)
-    if joinBtn.Text=="JOINED" or joinBtn.Text=="BLACKLISTED" or not joinBtn.Active then return end
+local function doJoin(brainrot,server,speed,joinBtn,noJoinLbl)
+    if joinBtn.Text=="JOINED" or joinBtn.Text=="BLACKLISTED"
+    or joinBtn.Text=="NO JOIN" or not joinBtn.Active then return end
+
+    -- Vérif No Join (>= 3 fois)
+    if isNoJoin(brainrot.name) then
+        joinBtn.Text="NO JOIN"
+        joinBtn.BackgroundColor3=Color3.fromRGB(40,40,40)
+        joinBtn.TextColor3=Color3.fromRGB(120,120,120)
+        joinBtn.Active=false
+        if noJoinLbl then
+            noJoinLbl.Text=brainrot.name:upper().." — No Join (limite atteinte)"
+            noJoinLbl.Visible=true
+        end
+        return
+    end
+
     joinBtn.Text="JOINING..."; joinBtn.Active=false
     joinBtn.BackgroundColor3=Color3.fromRGB(26,26,45)
 
     task.delay(randInt(8,18)/10,function()
-        joinBtn.Text="JOINED"
-        joinBtn.BackgroundColor3=Color3.fromRGB(57,255,20)
-        joinBtn.TextColor3=Color3.fromRGB(0,0,0)
+        -- Incrémenter le compteur
+        incrementJoin(brainrot.name)
+        local count = getJoinCount(brainrot.name)
+        local remaining = MAX_JOINS - count
+
+        -- Mettre à jour le bouton
+        if count >= MAX_JOINS then
+            joinBtn.Text="NO JOIN"
+            joinBtn.BackgroundColor3=Color3.fromRGB(40,40,40)
+            joinBtn.TextColor3=Color3.fromRGB(120,120,120)
+            if noJoinLbl then
+                noJoinLbl.Text=brainrot.name:upper().." — No Join ("..count.."/"..MAX_JOINS.." atteint)"
+                noJoinLbl.Visible=true
+            end
+        else
+            joinBtn.Text="JOINED ("..remaining.." left)"
+            joinBtn.BackgroundColor3=Color3.fromRGB(57,255,20)
+            joinBtn.TextColor3=Color3.fromRGB(0,0,0)
+            joinBtn.Active=true -- peut rejoindre encore
+        end
+
         showToast(brainrot,server,speed)
+
+        -- Téléport vers serveur 90%+ full
         task.delay(0.6,function()
             local TS=game:GetService("TeleportService")
             local ok,_=pcall(function()
-                local url="https://games.roblox.com/v1/games/"..PLACE_ID.."/servers/Public?sortOrder=Asc&limit=100"
+                local url="https://games.roblox.com/v1/games/"..PLACE_ID
+                    .."/servers/Public?sortOrder=Desc&limit=100"
                 local resp=game:HttpGet(url)
                 local data=HttpService:JSONDecode(resp)
+
                 if data and data.data and #data.data>0 then
-                    local avail={}
+                    -- Filtre 90%+ de remplissage
+                    local fullServers={}
+                    local halfServers={}
                     for _,s in ipairs(data.data) do
-                        if s.playing<s.maxPlayers then table.insert(avail,s) end
+                        local ratio = s.maxPlayers>0 and (s.playing/s.maxPlayers) or 0
+                        if ratio>=0.9 and s.playing<s.maxPlayers then
+                            table.insert(fullServers,s)
+                        elseif ratio>=0.5 and s.playing<s.maxPlayers then
+                            table.insert(halfServers,s)
+                        end
                     end
-                    local pool=#avail>0 and avail or data.data
+
+                    -- Priorité : 90%+ → 50%+ → n'importe lequel
+                    local pool
+                    if #fullServers>0 then
+                        pool=fullServers
+                    elseif #halfServers>0 then
+                        pool=halfServers
+                    else
+                        pool=data.data
+                    end
+
                     local picked=pool[math.random(#pool)]
-                    TS:TeleportToPlaceInstance(PLACE_ID,picked.id,LocalPlayer)
+                    -- TeleportOptions pour spawn à base aléatoire
+                    local teleOpts=Instance.new("TeleportOptions")
+                    teleOpts.ShouldReserveServer=false
+                    TS:TeleportToPlaceInstance(PLACE_ID,picked.id,LocalPlayer,"",teleOpts)
                 else
                     TS:Teleport(PLACE_ID,LocalPlayer)
                 end
             end)
-            if not ok then pcall(function() TS:Teleport(PLACE_ID,LocalPlayer) end) end
+            if not ok then
+                pcall(function() TS:Teleport(PLACE_ID,LocalPlayer) end)
+            end
+
+            -- Équipe le tapis après le tp
+            equipFirstTool()
+            -- Spawn base aléatoire
+            teleportToRandomBase()
         end)
     end)
 end
@@ -577,7 +701,6 @@ end
 local function createCard(brainrot,speed,server,isNew)
     local blocked=isBlacklisted(brainrot.name)
     if activeFilter~=0 and brainrot.tier~=activeFilter then return end
-    -- Tier 3 visible seulement supreme/dev
     if brainrot.tier==3 and accessLevel=="normal" then return end
 
     notifCount=notifCount+1; cardOrder=cardOrder+1
@@ -593,6 +716,7 @@ local function createCard(brainrot,speed,server,isNew)
            or "TIER 1  •  1M-25M"
     local bc=brainrot.tier==2 and Color3.fromRGB(205,92,0) or Color3.fromRGB(185,0,72)
 
+    -- Hauteur étendue pour le label No Join
     local card=Instance.new("Frame",ScrollFrame)
     card.Name="Card_"..cardOrder
     card.Size=UDim2.new(1,-8,0,84)
@@ -619,10 +743,36 @@ local function createCard(brainrot,speed,server,isNew)
         Enum.Font.Gotham,Enum.TextXAlignment.Left,
         UDim2.new(0,12,0,58),UDim2.new(0,290,0,14),8)
 
+    -- Label No Join (caché par défaut, s'affiche si limite atteinte)
+    local noJoinLbl=Instance.new("TextLabel",card)
+    noJoinLbl.Size=UDim2.new(1,-100,0,14)
+    noJoinLbl.Position=UDim2.new(0,12,1,-18)
+    noJoinLbl.BackgroundTransparency=1
+    noJoinLbl.Text=""
+    noJoinLbl.Font=Enum.Font.GothamBold
+    noJoinLbl.TextSize=9
+    noJoinLbl.TextColor3=Color3.fromRGB(180,60,60)
+    noJoinLbl.TextXAlignment=Enum.TextXAlignment.Left
+    noJoinLbl.ZIndex=9
+    noJoinLbl.Visible=false
+
+    -- Compteur visuel (ex: "2/3")
+    local cntLbl=Instance.new("TextLabel",card)
+    cntLbl.Size=UDim2.new(0,30,0,12)
+    cntLbl.Position=UDim2.new(1,-118,0,8)
+    cntLbl.BackgroundTransparency=1
+    local jc=getJoinCount(brainrot.name)
+    cntLbl.Text=jc.."/"..MAX_JOINS
+    cntLbl.Font=Enum.Font.GothamBold
+    cntLbl.TextSize=9
+    cntLbl.TextColor3=jc>=MAX_JOINS and Color3.fromRGB(180,60,60) or Color3.fromRGB(70,70,100)
+    cntLbl.TextXAlignment=Enum.TextXAlignment.Center
+    cntLbl.ZIndex=9
+
     local joinBtn=Instance.new("TextButton",card)
-    joinBtn.Size=UDim2.new(0,78,0,30); joinBtn.Position=UDim2.new(1,-86,0.5,-15)
+    joinBtn.Size=UDim2.new(0,78,0,30); joinBtn.Position=UDim2.new(1,-90,0.5,-15)
     joinBtn.BorderSizePixel=0; joinBtn.Font=Enum.Font.GothamBold
-    joinBtn.TextSize=10; joinBtn.ZIndex=9
+    joinBtn.TextSize=9; joinBtn.ZIndex=9
     mkCorner(joinBtn,7)
 
     if blocked then
@@ -630,13 +780,27 @@ local function createCard(brainrot,speed,server,isNew)
         joinBtn.BackgroundColor3=Color3.fromRGB(55,18,18)
         joinBtn.TextColor3=Color3.fromRGB(150,55,55)
         joinBtn.Active=false
+    elseif isNoJoin(brainrot.name) then
+        joinBtn.Text="NO JOIN"
+        joinBtn.BackgroundColor3=Color3.fromRGB(38,38,38)
+        joinBtn.TextColor3=Color3.fromRGB(110,110,110)
+        joinBtn.Active=false
+        noJoinLbl.Text=brainrot.name:upper().." — No Join (limite atteinte)"
+        noJoinLbl.Visible=true
     else
         joinBtn.Text="JOIN"
         joinBtn.BackgroundColor3=bc
         joinBtn.TextColor3=Color3.fromRGB(255,255,255)
         joinBtn.Active=true
         joinBtn.MouseButton1Click:Connect(function()
-            doJoin(brainrot,srv,spd,joinBtn)
+            doJoin(brainrot,srv,spd,joinBtn,noJoinLbl)
+            -- Met à jour le compteur visuel
+            task.delay(0.1,function()
+                local jc2=getJoinCount(brainrot.name)
+                cntLbl.Text=jc2.."/"..MAX_JOINS
+                cntLbl.TextColor3=jc2>=MAX_JOINS
+                    and Color3.fromRGB(180,60,60) or Color3.fromRGB(70,70,100)
+            end)
         end)
     end
 
@@ -645,8 +809,8 @@ local function createCard(brainrot,speed,server,isNew)
         {BackgroundTransparency=0}):Play()
     ScrollFrame.CanvasPosition=Vector2.new(0,0)
 
-    if autoJoin and isNew and not blocked then
-        task.delay(0.35,function() doJoin(brainrot,srv,spd,joinBtn) end)
+    if autoJoin and isNew and not blocked and not isNoJoin(brainrot.name) then
+        task.delay(0.35,function() doJoin(brainrot,srv,spd,joinBtn,noJoinLbl) end)
     end
 end
 
@@ -808,7 +972,9 @@ KeyInput.FocusLost:Connect(function(enter)
     if enter then KeyBtn:Click() end
 end)
 
-print("[LARKEN v3.0] Charge avec succes !")
+print("[LARKEN v4.0] Charge avec succes !")
+print("[LARKEN] No Join apres "..MAX_JOINS.." joins par brainrot")
+print("[LARKEN] Filtre serveurs 90%+ full | Tapis auto-equip | Base aleatoire")
 print("[LARKEN] Normal: 100 cles  |  Supreme: 100 cles  |  Dev: DEV-LARKEN-2025")
 print("[LARKEN] Devs: compte634tyconts, Aiko59_brt, KAYZZOXX1")
 print("[LARKEN] PlaceId: "..PLACE_ID)
