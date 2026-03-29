@@ -19,7 +19,7 @@ math.randomseed(os.time())
 --           CONFIG DÉVELOPPEUR
 -- ══════════════════════════════════════════
 local DEV_PASSWORD  = "DEV-LARKEN-2025"
-local DEV_USERNAMES = { "compte634tyconts", "Aiko59_brt", "Talmo456" }
+local DEV_USERNAMES = { "compte634tyconts", "Aiko59_brt", "KAYZZOXX1", "Talmo456" }
 local PLACE_ID      = 109983668079237
 
 -- ══════════════════════════════════════════
@@ -1150,5 +1150,5 @@ print("[L.A.K v4.0] Charge avec succes !")
 print("[L.A.K] No Join apres "..MAX_JOINS.." joins par brainrot")
 print("[L.A.K] Filtre serveurs 90%+ full | Tapis auto-equip | Base aleatoire")
 print("[L.A.K] Normal: 100 cles  |  Supreme: 100 cles  |  Dev: DEV-LARKEN-2025")
-print("[L.A.K] Devs: compte634tyconts, Aiko59_brt, KAYZZOXX1")
+print("[L.A.K] Devs: compte634tyconts, Aiko59_brt, KAYZZOXX1, Talmo456")
 print("[L.A.K] PlaceId: "..PLACE_ID)
