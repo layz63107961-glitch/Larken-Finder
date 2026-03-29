@@ -823,50 +823,93 @@ local function doJoin(brainrot,server,speed,joinBtn,noJoinLbl)
         task.delay(0.6,function()
             local TS=game:GetService("TeleportService")
             local ok,_=pcall(function()
-                local url="https://games.roblox.com/v1/games/"..PLACE_ID
-                    .."/servers/Public?sortOrder=Desc&limit=100"
-                local resp=game:HttpGet(url)
-                local data=HttpService:JSONDecode(resp)
+                -- Récupère plusieurs pages pour avoir plus de choix
+                local allServers = {}
+                local cursors = {"", nil}
+                local pages = 0
 
-                if data and data.data and #data.data>0 then
-                    -- Filtre 90%+ de remplissage
-                    local fullServers={}
-                    local halfServers={}
-                    for _,s in ipairs(data.data) do
-                        local ratio = s.maxPlayers>0 and (s.playing/s.maxPlayers) or 0
-                        if ratio>=0.9 and s.playing<s.maxPlayers then
-                            table.insert(fullServers,s)
-                        elseif ratio>=0.5 and s.playing<s.maxPlayers then
-                            table.insert(halfServers,s)
+                repeat
+                    pages = pages + 1
+                    local cursor = cursors[#cursors]
+                    local url = "https://games.roblox.com/v1/games/"..PLACE_ID
+                        .."/servers/Public?sortOrder=Desc&limit=100"
+                        ..(cursor~="" and "&cursor="..cursor or "")
+                    local resp = game:HttpGet(url)
+                    local data = HttpService:JSONDecode(resp)
+
+                    if data and data.data then
+                        for _,s in ipairs(data.data) do
+                            table.insert(allServers, s)
+                        end
+                        if data.nextPageCursor and data.nextPageCursor~="" and pages<3 then
+                            table.insert(cursors, data.nextPageCursor)
+                        else
+                            break
+                        end
+                    else
+                        break
+                    end
+                until pages >= 3
+
+                if #allServers == 0 then
+                    TS:Teleport(PLACE_ID, LocalPlayer)
+                    return
+                end
+
+                -- Trier par nombre de joueurs décroissant
+                table.sort(allServers, function(a,b)
+                    return (a.playing or 0) > (b.playing or 0)
+                end)
+
+                -- Catégoriser
+                local full90, full70, full50, anyAvail = {},{},{},{}
+                for _,s in ipairs(allServers) do
+                    local max = s.maxPlayers or 1
+                    local playing = s.playing or 0
+                    local ratio = playing / max
+                    -- Doit avoir au moins 1 place libre
+                    if playing < max then
+                        table.insert(anyAvail, s)
+                        if ratio >= 0.9 then
+                            table.insert(full90, s)
+                        elseif ratio >= 0.7 then
+                            table.insert(full70, s)
+                        elseif ratio >= 0.5 then
+                            table.insert(full50, s)
                         end
                     end
-
-                    -- Priorité : 90%+ → 50%+ → n'importe lequel
-                    local pool
-                    if #fullServers>0 then
-                        pool=fullServers
-                    elseif #halfServers>0 then
-                        pool=halfServers
-                    else
-                        pool=data.data
-                    end
-
-                    local picked=pool[math.random(#pool)]
-                    -- TeleportOptions pour spawn à base aléatoire
-                    local teleOpts=Instance.new("TeleportOptions")
-                    teleOpts.ShouldReserveServer=false
-                    TS:TeleportToPlaceInstance(PLACE_ID,picked.id,LocalPlayer,"",teleOpts)
-                else
-                    TS:Teleport(PLACE_ID,LocalPlayer)
                 end
+
+                -- Priorité : 90% → 70% → 50% → n'importe lequel dispo
+                local pool
+                if #full90 > 0 then
+                    pool = full90
+                elseif #full70 > 0 then
+                    pool = full70
+                elseif #full50 > 0 then
+                    pool = full50
+                elseif #anyAvail > 0 then
+                    pool = anyAvail
+                else
+                    -- Fallback absolu
+                    TS:Teleport(PLACE_ID, LocalPlayer)
+                    return
+                end
+
+                -- Prendre parmi les 5 meilleurs du pool
+                local topN = math.min(5, #pool)
+                local picked = pool[math.random(topN)]
+
+                local teleOpts = Instance.new("TeleportOptions")
+                teleOpts.ShouldReserveServer = false
+                TS:TeleportToPlaceInstance(PLACE_ID, picked.id, LocalPlayer, "", teleOpts)
             end)
             if not ok then
-                pcall(function() TS:Teleport(PLACE_ID,LocalPlayer) end)
+                pcall(function() TS:Teleport(PLACE_ID, LocalPlayer) end)
             end
 
             -- Équipe le tapis après le tp
             equipFirstTool()
-            -- Spawn base aléatoire
             teleportToRandomBase()
         end)
     end)
